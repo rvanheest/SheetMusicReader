@@ -113,8 +113,7 @@ object Complex {
 			* The optional location attribute indicates whether the cancellation appears relative to the new
 			* key signature.
 			*/
-		case class Cancel(cancel: Fifths,
-											location: Option[CancelLocation] = Option.empty)
+		case class Cancel(cancel: Fifths, location: Option[CancelLocation] = Option.empty)
 
 		/**
 			* Clefs are represented by a combination of sign, line, and clef-octave-change elements.
@@ -165,6 +164,10 @@ object Complex {
 			require(timeSignature.nonEmpty)
 		}
 
+		sealed abstract class KeyChoice
+		case class TraditionalKeyChoice(traditional: TraditionalKey) extends KeyChoice
+		case class NonTraditionalKeysChoice(nonTraditionals: List[NonTraditionalKey] = List()) extends KeyChoice
+
 		/**
 			* The key type represents a key signature. Both traditional and non-traditional key signatures are
 			* supported. The optional number attribute refers to staff numbers. If absent, the key signature
@@ -174,7 +177,7 @@ object Complex {
 			* The optional list of key-octave elements is used to specify in which octave each element of the
 			* key signature appears.
 			*/
-		case class Key(key: Either[TraditionalKey, List[NonTraditionalKey]] = Right(List()),
+		case class Key(key: KeyChoice = NonTraditionalKeysChoice(),
 									 keyOctave: List[KeyOctave] = List(),
 									 number: Option[StaffNumber] = Option.empty,
 									 printStyle: PrintStyle = PrintStyle(),
@@ -208,7 +211,7 @@ object Complex {
 			require(slashes forall (_ >= 1))
 		}
 
-		trait MeasureStyleChoice
+		sealed abstract class MeasureStyleChoice
 		case class MultipleRestChoice(multipleRest: MultipleRest) extends MeasureStyleChoice
 		case class MeasureRepeatChoice(measureRepeat: MeasureRepeat) extends MeasureStyleChoice
 		case class BeatRepeatChoice(beatRepeat: BeatRepeat) extends MeasureStyleChoice
@@ -319,11 +322,13 @@ object Complex {
 			* element content indicates the symbol to be used, if any, such as an X. The time element's symbol
 			* attribute is not used when a senza-misura element is present.
 			*/
-		case class InnerTimeClass(timeSignature: List[TimeSignature],
-															interchangeable: Option[Interchangeable] = Option.empty) {
+		sealed abstract class TimeChoice
+		case class SignatureTimeChoice(timeSignature: List[TimeSignature],
+															interchangeable: Option[Interchangeable] = Option.empty) extends TimeChoice {
 			require(timeSignature.nonEmpty)
 		}
-		case class Time(timeSigOrSenzaMisura: Either[InnerTimeClass, String],
+		case class SenzaMisuraTimeChoice(s: String) extends TimeChoice
+		case class Time(timeChoice: TimeChoice,
 										number: Option[StaffNumber] = Option.empty,
 										symbol: Option[TimeSymbol] = Option.empty,
 										separator: Option[TimeSeparator] = Option.empty,
@@ -450,7 +455,7 @@ object Complex {
 			*/
 		case class AccidentalText(value: AccidentalValue, formatting: TextFormatting = TextFormatting())
 
-		trait DynamicSymbolsChoice
+		sealed abstract class DynamicSymbolsChoice
 		case class DynamicSymbolChoice(symbol: DynamicSymbols.DynamicSymbols) extends DynamicSymbolsChoice
 		case class DynamicStringChoice(string: String) extends DynamicSymbolsChoice
 
@@ -496,7 +501,6 @@ object Complex {
 		/**
 			* The empty-print-style type represents an empty element with print-style attribute group.
 			*/
-		// TODO type alias?
 		case class EmptyPrintStyle(printStyle: PrintStyle = PrintStyle())
 
 		/**
@@ -601,13 +605,17 @@ object Complex {
 															elevation: Option[RotationDegrees] = Option.empty,
 															id: String)
 
+		sealed abstract class NameDisplayChoice
+		case class FormattedTextNameDisplayChoice(text: FormattedText) extends NameDisplayChoice
+		case class AccidentalTextNameDisplayChoice(text: AccidentalText) extends NameDisplayChoice
+
 		/**
 			* The name-display type is used for exact formatting of multi-font text in part and group names to
 			* the left of the system. The print-object attribute can be used to determine what, if anything,
 			* is printed at the start of each system. Enclosure for the display-text element is none by default.
 			* Language for the display-text element is Italian ("it") by default.
 			*/
-		case class NameDisplay(name: List[Either[FormattedText, AccidentalText]] = List(),
+		case class NameDisplay(name: List[NameDisplayChoice] = List(),
 													 printObject: PrintObject = PrintObject())
 
 		/**
@@ -616,7 +624,7 @@ object Complex {
 			*/
 		case class OtherPlay(other: String, playType: String)
 
-		trait PlayChoice
+		sealed abstract class PlayChoice
 		case class StringChoice(ipa: String) extends PlayChoice
 		case class MuteChoice(mute: Mute) extends PlayChoice
 		case class SemiPitchedChoice(semiPitched: SemiPitched) extends PlayChoice
@@ -835,7 +843,7 @@ object Complex {
 			require(directionType.nonEmpty)
 		}
 
-		trait DirectionTypeChoice
+		sealed abstract class DirectionTypeChoice
 		case class RehearsalChoice(rehearsal: List[FormattedText]) extends DirectionTypeChoice {
 			require(rehearsal.nonEmpty)
 		}
@@ -1061,7 +1069,7 @@ object Complex {
 		case class MeasureNumbering(value: MeasureNumberingValue,
 																printStyleAlign: PrintStyleAlign = PrintStyleAlign())
 
-		trait BeatUnitChoice
+		sealed abstract class BeatUnitChoice
 		case class MinuteChoice(perMinute: PerMinute) extends BeatUnitChoice
 		case class BeatChoice(beatUnit: BeatUnit) extends BeatUnitChoice
 
@@ -1074,7 +1082,7 @@ object Complex {
 			require(note.nonEmpty)
 		}
 
-		trait MetronomeTypeChoice
+		sealed abstract class MetronomeTypeChoice
 		case class MetronomeBeatChoice(beatUnit: BeatUnit, beatUnitChoice: BeatUnitChoice) extends MetronomeTypeChoice
 		case class MetronomeNoteChoice(metronomeNote: List[MetronomeNote],
 																	 metronomeRelation: Option[MetronomeRelation] = Option.empty) extends MetronomeTypeChoice {
@@ -1183,7 +1191,7 @@ object Complex {
 			*/
 		case class PerMinute(pm: String, font: Font = Font())
 
-		trait PercussionTypeChoice
+		sealed abstract class PercussionTypeChoice
 		case class GlassPercussion(glass: Glass) extends PercussionTypeChoice
 		case class MetalPercussion(metal: Metal) extends PercussionTypeChoice
 		case class WoodPercussion(wood: Wood) extends PercussionTypeChoice
@@ -1397,7 +1405,7 @@ object Complex {
 		import Complex.ComplexCommon.TypedText
 		import Primatives.PrimativeCommon.{Date, YesNo}
 
-		trait EncodingChoice
+		sealed abstract class EncodingChoice
 		case class EncodingDate(encodingDate: Date) extends EncodingChoice
 		case class EncodingEncoder(encoder: TypedText) extends EncodingChoice
 		case class EncodingSoftware(software: String) extends EncodingChoice
@@ -1410,7 +1418,6 @@ object Complex {
 			* words, and arrangement, but other types may be used. The type attribute is only needed when
 			* there are multiple encoder elements.
 			*/
-		// TODO type alias???
 		case class Encoding(encodingChoice: List[EncodingChoice] = List())
 
 		/**
@@ -1674,7 +1681,7 @@ object Complex {
 													placement: Placement = Placement(),
 													color: Color = Color())
 
-		trait ArticulationChoice
+		sealed abstract class ArticulationChoice
 		case class AccentChoice(accent: EmptyPlacement = EmptyPlacement()) extends ArticulationChoice
 		case class StrongAccentChoice(strongAccent: StrongAccent = StrongAccent()) extends ArticulationChoice
 		case class StaccatoChoice(staccato: EmptyPlacement = EmptyPlacement()) extends ArticulationChoice
@@ -1732,7 +1739,7 @@ object Complex {
 			*/
 		case class Articulations(articulations: List[ArticulationChoice] = List())
 
-		trait ArrowChoice
+		sealed abstract class ArrowChoice
 		case class StraightArrowChoice(arrowDirection: ArrowDirection,
 																	 arrowStyle: Option[ArrowStyle] = Option.empty) extends ArrowChoice
 		case class CircleArrowChoice(circularArrow: CircularArrow) extends ArrowChoice
@@ -1775,7 +1782,7 @@ object Complex {
 										fan: Option[Fan] = Option.empty,
 										color: Color = Color())
 
-		trait BandChoice
+		sealed abstract class BandChoice
 		case class PreBand(preBand: Empty) extends BandChoice
 		case class Release(release: Empty) extends BandChoice
 
@@ -1925,11 +1932,11 @@ object Complex {
 												printStyle: PrintStyle = PrintStyle(),
 												placement: Placement = Placement())
 
-		trait HarmonicChoice
+		sealed abstract class HarmonicChoice
 		case class Natural(natural: Empty) extends HarmonicChoice
 		case class Artificial(artificial: Empty) extends HarmonicChoice
 
-		trait HarmonicPitchChoice
+		sealed abstract class HarmonicPitchChoice
 		case class BasePitch(basePitch: Empty) extends HarmonicPitchChoice
 		case class TouchingPitch(touchingPitch: Empty) extends HarmonicPitchChoice
 		case class SoundingPitch(soundingPitch: Empty) extends HarmonicPitchChoice
@@ -1998,7 +2005,7 @@ object Complex {
 		case class ElisionSyllabic(elision: TextFontColor, syllabic: Option[Syllabic] = Option.empty)
 		case class ElisionSyllabicText(es: Option[ElisionSyllabic] = Option.empty, text: TextElementData)
 
-		trait LyricsChoice
+		sealed abstract class LyricsChoice
 		case class TextLyricsChoice(syllabic: Option[Syllabic] = Option.empty, text: TextElementData,
 																est: List[ElisionSyllabicText] = List(),
 																extend: Option[Extend] = Option.empty) extends LyricsChoice
@@ -2061,7 +2068,7 @@ object Complex {
 														 placement: Placement = Placement(),
 														 color: Color = Color())
 
-		trait NotationsChoice
+		sealed abstract class NotationsChoice
 		case class TiedNotation(tied: Tied) extends NotationsChoice
 		case class SlurNotation(slur: Slur) extends NotationsChoice
 		case class TupletNotation(tuplet: Tuplet) extends NotationsChoice
@@ -2087,7 +2094,7 @@ object Complex {
 												 notations: List[NotationsChoice] = List(),
 												 printObject: PrintObject = PrintObject())
 
-		sealed trait NoteChoice
+		sealed abstract class NoteChoice
 		case class GraceNoteChoice(grace: Grace = Grace(),
 															 fullNote: FullNote,
 															 tie: List[Tie] = List()) extends NoteChoice {
@@ -2173,7 +2180,7 @@ object Complex {
 												font: Font = Font(),
 												color: Color = Color())
 
-		trait NoteHeadTextChoice
+		sealed abstract class NoteHeadTextChoice
 		case class DisplayTextChoice(displayText: FormattedText) extends NoteHeadTextChoice
 		case class AccidentalTextChoice(accidentalText: AccidentalText) extends NoteHeadTextChoice
 
@@ -2187,7 +2194,7 @@ object Complex {
 			require(choice.nonEmpty)
 		}
 
-		trait OrnamentsChoice
+		sealed abstract class OrnamentsChoice
 		case class TrillMarkOrnamentsChoice(trillMark: EmptyTrillSound = EmptyTrillSound()) extends OrnamentsChoice
 		case class TurnOrnamentsChoice(turn: HorizontalTurn = HorizontalTurn()) extends OrnamentsChoice
 		case class DelayedTurnOrnamentsChoice(delayedTurn: HorizontalTurn = HorizontalTurn()) extends OrnamentsChoice
@@ -2237,7 +2244,6 @@ object Complex {
 			* The other-ornament element is used to define any ornaments not yet in the MusicXML format.
 			* This allows extended representation, though without application interoperability.
 			*/
-		// TODO type alias???
 		case class Ornaments(content: List[OrnamentsContent] = List())
 
 		/**
@@ -2322,7 +2328,7 @@ object Complex {
 			*/
 		case class StyleText(text: String, printStyle: PrintStyle = PrintStyle())
 
-		trait TechnicalChoice
+		sealed abstract class TechnicalChoice
 		case class UpBowTechnicalChoice(upBow: EmptyPlacement = EmptyPlacement()) extends TechnicalChoice
 		case class DownBowTechnicalChoice(downBow: EmptyPlacement = EmptyPlacement()) extends TechnicalChoice
 		case class HarmonicTechnicalChoice(harmonic: Harmonic = Harmonic()) extends TechnicalChoice
@@ -2385,7 +2391,6 @@ object Complex {
 			* The other-technical element is used to define any technical indications not yet in the MusicXML
 			* format. This allows extended representation, though without application interoperability.
 			*/
-		// TODO type alias???
 		case class Technical(choice: List[TechnicalChoice] = List())
 
 		/**
@@ -2553,7 +2558,6 @@ object Complex {
 			* The unpitched type represents musical elements that are notated on the staff but lack definite
 			* pitch, such as unpitched percussion and speaking voice.
 			*/
-		// TODO type alias???
 		case class Unpitched(displayStepOctave: Option[DisplayStepOctave] = Option.empty)
 	}
 
@@ -2572,7 +2576,7 @@ object Complex {
 		import Primatives.PrimativeCommon.{PositiveIntegerOrEmpty, StartStop}
 		import Primatives.PrimativeScore.{GroupBarlineValue, GroupSymbolValue}
 
-		trait CreditChoice
+		sealed abstract class CreditChoice
 		case class CreditImageChoice(creditImage: Image) extends CreditChoice
 		case class CreditPairChoice(creditWords: FormattedText,
 																links: List[(List[Link], List[Bookmark], FormattedText)] = List()) extends CreditChoice
@@ -2695,7 +2699,7 @@ object Complex {
 												 editorial: Editorial = Editorial(),
 												 ssType: StartStop, number: String = "1")
 
-		trait PartGroupOrScoreChoice
+		sealed abstract class PartGroupOrScoreChoice
 		case class PartGroupChoice(partGroup: Group.GroupScore.PartGroup) extends PartGroupOrScoreChoice
 		case class ScorePartChoice(scorePart: Group.GroupScore.ScorePart) extends PartGroupOrScoreChoice
 
@@ -2718,7 +2722,7 @@ object Complex {
 			*/
 		case class PartName(name: String, partNameText: PartNameText = PartNameText())
 
-		trait InstrumentChoice
+		sealed abstract class InstrumentChoice
 		case class SoloChoice(solo: Empty) extends InstrumentChoice
 		case class EnsembleChoice(ensemble: PositiveIntegerOrEmpty) extends InstrumentChoice
 

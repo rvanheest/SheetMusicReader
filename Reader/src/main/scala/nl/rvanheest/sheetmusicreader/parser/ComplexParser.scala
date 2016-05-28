@@ -91,7 +91,8 @@ trait ComplexParser extends AttributeGroupsParser {
 				printObject <- xmlToPrintObject
 				key <- branchNode(name) {
 					for {
-						ntrKey <- xmlToTraditionalKey.map(Left(_)) <|> xmlToNonTraditionalKey.many.map(Right(_))
+						ntrKey <- xmlToTraditionalKey.map(TraditionalKeyChoice(_))
+						  .orElse(xmlToNonTraditionalKey.many.map(NonTraditionalKeysChoice(_)))
 						octave <- xmlToKeyOctave("key-octave").many
 					} yield Key(ntrKey, octave, number, printStyle, printObject)
 				}
@@ -191,9 +192,9 @@ trait ComplexParser extends AttributeGroupsParser {
 						for {
 							timeSignature <- xmlToTimeSignature.atLeastOnce
 							interchangeable <- xmlToInterchangeable("interchangeable").maybe
-						} yield InnerTimeClass(timeSignature, interchangeable)
+						} yield SignatureTimeChoice(timeSignature, interchangeable)
 					}
-					xmlToInnerTimeClass.map(Left(_)).orElse(xmlToString("senza-misura").map(Right(_)))
+					xmlToInnerTimeClass.orElse(xmlToString("senza-misura").map(SenzaMisuraTimeChoice(_)))
 				}
 			} yield Time(choice, number, symbol, separator, printStyleAlign, printObject)
 		}
@@ -436,8 +437,8 @@ trait ComplexParser extends AttributeGroupsParser {
 			for {
 				printObject <- xmlToPrintObject
 				nameDisplay <- branchNode(name) {
-					xmlToFormattedText("display-text").map(Left(_))
-						.orElse(xmlToAccidentalText("accidental-text").map(Right(_)))
+					xmlToFormattedText("display-text").map(FormattedTextNameDisplayChoice(_))
+						.orElse(xmlToAccidentalText("accidental-text").map(AccidentalTextNameDisplayChoice(_)))
 						.many
 						.map(NameDisplay(_, printObject))
 				}

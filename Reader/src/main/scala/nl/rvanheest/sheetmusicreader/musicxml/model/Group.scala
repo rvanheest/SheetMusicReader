@@ -155,7 +155,7 @@ object Group {
 			*/
 		case class BeatUnit(beatUnit: NoteTypeValue, beatUnitDot: List[Empty] = List())
 
-		trait HarmonyChordChoice
+		sealed abstract class HarmonyChordChoice
 		case class RootChoice(root: Root) extends HarmonyChordChoice
 		case class StyleTextChoice(styleText: StyleText) extends HarmonyChordChoice
 
@@ -230,7 +230,7 @@ object Group {
 			*/
 		case class DisplayStepOctave(displayStep: Step, displayOctave: Octave)
 
-		sealed trait FullNoteChoice
+		sealed abstract class FullNoteChoice
 		case class PitchChoice(pitch: Pitch) extends FullNoteChoice
 		case class UnpitchedChoice(unpitched: Unpitched) extends FullNoteChoice
 		case class RestChoice(rest: Rest) extends FullNoteChoice
@@ -260,7 +260,7 @@ object Group {
 		import Complex.ComplexScore.{Credit, Defaults, PartList, Work}
 
 
-		trait MusicDataChoice
+		sealed abstract class MusicDataChoice
 		case class NoteChoice(note: Note) extends MusicDataChoice
 		case class BackupChoice(backup: Backup) extends MusicDataChoice
 		case class ForwardChoice(forward: Forward) extends MusicDataChoice
@@ -279,7 +279,6 @@ object Group {
 			* The music-data group contains the basic musical data that is either associated with a part
 			* or a measure, depending on whether the partwise or timewise hierarchy is used.
 			*/
-		// TODO type alias???
 		case class MusicData(data: List[MusicDataChoice] = List())
 
 		/**

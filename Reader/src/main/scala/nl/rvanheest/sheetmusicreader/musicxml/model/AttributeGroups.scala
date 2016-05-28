@@ -458,8 +458,7 @@ object AttributeGroups {
 			* The print-style and justify attribute groups are deprecated in MusicXML 2.0 in favor of the new
 			* group-name-display and group-abbreviation-display elements.
 			*/
-		case class GroupNameText(printStyle: PrintStyle = PrintStyle(),
-														 justify: Justify = Justify())
+		case class GroupNameText(printStyle: PrintStyle = PrintStyle(), justify: Justify = Justify())
 
 		/**
 			* The measure-attributes group is used by the measure element. Measures have a required number
