@@ -1,0 +1,1150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="3.0">
+	<work>
+		<work-number>workNumber</work-number>
+		<work-title>workTitle</work-title>
+		<opus xlink:href="#href"
+		      xlink:type="simple"
+		      xlink:role="roleOfOpus"
+		      xlink:title="titleOfOpus"
+		      xlink:show="new"
+		      xlink:actuate="none"/>
+	</work>
+	<movement-number>movementNumber</movement-number>
+	<movement-title>movementTitle</movement-title>
+	<identification>
+		<creator>general creator</creator>
+		<creator type="bewerking">bewerker</creator>
+		<creator type="tekst">tekstschrijver</creator>
+		<creator/> <!-- empty one, just for fun ;-) -->
+		<rights type="words">Copyright © 2010</rights>
+		<rights type="music">Some more copyright</rights>
+		<encoding>
+			<software>Software 1</software>
+			<software>Software 2</software>
+			<encoding-date>2011-08-08</encoding-date>
+			<encoding-date>30 juli 1992</encoding-date>
+			<encoder type="foo">encoder text 1</encoder>
+			<encoder type="bar">encoder text 2</encoder>
+			<encoding-description>description 1</encoding-description>
+			<encoding-description>description 2</encoding-description>
+			<supports attribute="attribute1" element="print" type="yes" value="test" />
+			<supports type="no" element="print test" />
+		</encoding>
+		<source>sourceText</source>
+		<relation type="relation1">foo</relation>
+		<relation type="relation2">bar</relation>
+		<relation type="relation3"/>
+		<miscellaneous>
+			<miscellaneous-field name="test1">field1</miscellaneous-field>
+			<miscellaneous-field name="test2">field2</miscellaneous-field>
+			<miscellaneous-field name="test3"/>
+		</miscellaneous>
+	</identification>
+	<defaults>
+		<scaling>
+			<millimeters>6.2831</millimeters>
+			<tenths>40</tenths>
+		</scaling>
+		<page-layout>
+			<page-height>1</page-height>
+			<page-width>2</page-width>
+			<page-margins>
+				<left-margin>3</left-margin>
+				<right-margin>4</right-margin>
+				<top-margin>5</top-margin>
+				<bottom-margin>6</bottom-margin>
+			</page-margins>
+			<page-margins type="odd">
+				<left-margin>7</left-margin>
+				<right-margin>8</right-margin>
+				<top-margin>9</top-margin>
+				<bottom-margin>10</bottom-margin>
+			</page-margins>
+		</page-layout>
+		<system-layout>
+			<system-margins>
+				<left-margin>11</left-margin>
+				<right-margin>12</right-margin>
+			</system-margins>
+			<system-distance>13</system-distance>
+			<top-system-distance>14</top-system-distance>
+			<system-dividers>
+				<left-divider print-object="yes"
+							  default-x="15"
+							  default-y="16"
+							  relative-x="17"
+							  relative-y="18"
+							  font-family="Font1"
+							  font-style="normal"
+							  font-size="small"
+							  font-weight="bold"
+							  color="#40800080"
+							  halign="center"
+							  valign="baseline"/>
+				<right-divider/>
+			</system-dividers>
+		</system-layout>
+		<staff-layout number="5">
+			<staff-distance>20</staff-distance>
+		</staff-layout>
+		<staff-layout number="1"/>
+		<staff-layout/>
+		<appearance>
+			<line-width type="foo">21</line-width>
+			<line-width type="bar">22</line-width>
+			<note-size type="cue">0</note-size>
+			<note-size type="grace">23</note-size>
+			<distance type="bar">24</distance>
+			<distance type="foo">25</distance>
+			<other-appearance type="fo">test</other-appearance>
+			<other-appearance type="ba">test2</other-appearance>
+		</appearance>
+		<music-font font-family="Font2"
+					font-style="normal"
+					font-size="19"
+					font-weight="bold"/>
+		<word-font font-family="Font3"
+				   font-style="normal"
+				   font-size="large"
+				   font-weight="bold"/>
+		<lyric-font number="5"
+					name="test"
+					font-family="Font2"
+					font-style="normal"
+					font-size="19"
+					font-weight="bold"/>
+		<lyric-font/>
+		<lyric-language xml:lang="lang1" name="name1" number="num"/>
+		<lyric-language xml:lang="lang2"/>
+	</defaults>
+	<credit page="1">
+		<credit-type>foo</credit-type>
+		<credit-type>bar</credit-type>
+		<link xlink:href="href1" name="name" element="elementX" position="2"/>
+		<link xlink:href="href2"/>
+		<bookmark id="bm1" name="nm1" element="elementY"/>
+		<bookmark id="bm2" name="nm2"/>
+		<credit-image type="imgType" source="src" valign="top"/>
+	</credit>
+	<credit>
+		<credit-type>foobar</credit-type>
+		<credit-type>barfoo</credit-type>
+		<link xlink:href="href3"/>
+		<link xlink:href="href4"/>
+		<bookmark id="bm3"/>
+		<bookmark id="bm4"/>
+		<credit-words>foobar</credit-words>
+		<link xlink:href="href5"/>
+		<link xlink:href="href6"/>
+		<bookmark id="x"/>
+		<credit-words justify="left"
+				underline="0"
+				overline="0"
+				line-through="0"
+				rotation="20"
+				letter-spacing="20"
+				line-height="normal"
+				xml:lang="langTest"
+				xml:space="default"
+				dir="lro"
+				enclosure="triangle">word1</credit-words>
+		<credit-words>word2</credit-words>
+	</credit>
+	<part-list>
+		<part-group type="start">
+			<group-name justify="center">groupName</group-name>
+			<group-name-display>
+				<accidental-text>sharp</accidental-text>
+				<accidental-text>natural</accidental-text>
+				<display-text>s1</display-text>
+				<accidental-text>flat</accidental-text>
+				<display-text>s2</display-text>
+			</group-name-display>
+			<group-abbreviation>groupAbbreviation</group-abbreviation>
+			<group-abbreviation-display/><!-- no content is also an option... -->
+			<group-symbol color="#800080">brace</group-symbol>
+			<group-barline color="#800080">yes</group-barline>
+			<group-time/>
+			<footnote>footnote text</footnote>
+			<level reference="no" parentheses="yes" bracket="yes" size="cue">level text</level>
+		</part-group>
+		<part-group type="start" number="2">
+			<group-name>groupName2</group-name>
+			<group-abbreviation>groupAbbreviation2</group-abbreviation>
+		</part-group>
+		<part-group type="stop" number="3" /> <!-- no content is also an option... -->
+		<score-part id="P1">
+			<part-name>S/A</part-name>
+			<part-abbreviation>S/A</part-abbreviation>
+			<score-instrument id="P1-I1">
+				<instrument-name>Midi_53</instrument-name>
+			</score-instrument>
+			<midi-device port="5" id="P1-I1">device1</midi-device>
+			<midi-device>device2</midi-device>
+			<midi-instrument id="P1-I1">
+				<midi-channel>1</midi-channel>
+				<midi-program>1</midi-program>
+				<volume>80</volume>
+				<pan>0</pan>
+			</midi-instrument>
+			<midi-instrument id="P1-I1">
+				<pan>120</pan>
+			</midi-instrument>
+		</score-part>
+		<part-group type="stop"/>
+		<score-part id="P2">
+			<part-name>name p2</part-name>
+			<score-instrument id="P2-I2">
+				<instrument-name>Midi_54</instrument-name>
+				<solo/>
+			</score-instrument>
+			<score-instrument id="P2_I3">
+				<instrument-name>Midi_54a</instrument-name>
+			</score-instrument>
+		</score-part>
+		<score-part id="P3">
+			<part-name>name p3</part-name>
+			<score-instrument id="P3-I2">
+				<instrument-name>Midi_55</instrument-name>
+				<ensemble>55</ensemble>
+			</score-instrument>
+		</score-part>
+		<part-group type="start"/>
+	</part-list>
+	<!--========================================================= -->
+	<part id="P1">
+		<measure number="1_1" implicit="yes" non-controlling="yes" width="2">
+			<print>
+				<measure-layout>
+					<measure-distance>12</measure-distance>
+				</measure-layout>
+				<measure-numbering>none</measure-numbering>
+				<part-name-display>
+					<accidental-text>sharp</accidental-text>
+				</part-name-display>
+				<part-abbreviation-display>
+					<accidental-text>flat</accidental-text>
+				</part-abbreviation-display>
+			</print>
+			<print/>
+			<attributes>
+				<footnote>footnote text</footnote>
+				<level reference="yes" parentheses="yes" bracket="yes" size="full">level text</level>
+				<divisions>8</divisions>
+				<key number="1">
+					<cancel location="left">4</cancel>
+					<fifths>4</fifths>
+					<mode>test mode</mode>
+					<key-octave number="1">9</key-octave>
+					<key-octave number="2">8</key-octave>
+					<key-octave number="3" cancel="yes">7</key-octave>
+				</key>
+				<key number="3" print-object="no">
+					<!-- traditional key - no cancel or mode -->
+					<fifths>5</fifths>
+					<key-octave number="4">6</key-octave>
+				</key>
+				<key>
+					<key-step>A</key-step>
+					<key-alter>1.0</key-alter>
+					<key-step>B</key-step>
+					<key-alter>2.0</key-alter>
+					<key-accidental>sharp</key-accidental>
+					<key-step>C</key-step>
+					<key-alter>3.0</key-alter>
+					<key-octave number="5">5</key-octave>
+					<key-octave number="6">4</key-octave>
+				</key>
+				<key>
+					<!-- no choice -->
+					<key-octave number="7">3</key-octave>
+					<key-octave number="8">2</key-octave>
+				</key>
+				<key/> <!-- no content -->
+				<time number="1" symbol="cut">
+					<!-- 1 time-signature -->
+					<beats>beats test</beats>
+					<beat-type>beat type test</beat-type>
+					<interchangeable separator="adjacent">
+						<time-relation>bracket</time-relation>
+						<beats>beats</beats>
+						<beat-type>beat type</beat-type>
+					</interchangeable>
+				</time>
+				<time number="2" separator="diagonal">
+					<!-- n time-signature -->
+					<beats>b1</beats>
+					<beat-type>bt1</beat-type>
+					<beats>b2</beats>
+					<beat-type>bt2</beat-type>
+					<beats>b3</beats>
+					<beat-type>bt3</beat-type>
+				</time>
+				<time number="1" symbol="cut">
+					<!-- 1 time-signature -->
+					<beats>b</beats>
+					<beat-type>bt</beat-type>
+					<interchangeable symbol="note" separator="none">
+						<!-- no time relation -->
+						<!-- multiple time-signatures -->
+						<beats>b1</beats>
+						<beat-type>bt1</beat-type>
+						<beats>b2</beats>
+						<beat-type>bt2</beat-type>
+					</interchangeable>
+				</time>
+				<time print-object="yes" separator="none">
+					<!-- senza-misura choice -->
+					<senza-misura>senza-misura test</senza-misura>
+				</time>
+				<staves>20</staves>
+				<part-symbol top-staff="20" bottom-staff="30">line</part-symbol>
+				<instruments>15</instruments>
+				<clef number="1" additional="yes" size="large" after-barline="yes">
+					<sign>G</sign>
+					<line>2</line>
+					<clef-octave-change>-1</clef-octave-change>
+				</clef>
+				<clef print-object="no">
+					<sign>F</sign>
+				</clef>
+				<staff-details>
+					<staff-type>ossia</staff-type>
+					<staff-lines>12</staff-lines>
+					<staff-tuning line="13">
+						<tuning-step>A</tuning-step>
+						<tuning-alter>21</tuning-alter>
+						<tuning-octave>3</tuning-octave>
+					</staff-tuning>
+					<staff-tuning line="14">
+						<tuning-step>B</tuning-step>
+						<tuning-octave>4</tuning-octave>
+					</staff-tuning>
+					<capo>15</capo>
+					<staff-size>16.7</staff-size>
+				</staff-details>
+				<staff-details number="18" show-frets="letters" print-object="no" print-spacing="yes"/>
+				<staff-details/>
+				<transpose>
+					<diatonic>12</diatonic>
+					<chromatic>13</chromatic>
+					<octave-change>15</octave-change>
+					<double/>
+				</transpose>
+				<transpose number="20">
+					<chromatic>14</chromatic>
+				</transpose>
+				<directive xml:lang="test123" color="#40800080">dir1</directive>
+				<directive>dir2</directive>
+				<measure-style number="1">
+					<multiple-rest use-symbols="yes">12</multiple-rest>
+				</measure-style>
+				<measure-style number="2">
+					<multiple-rest/>
+				</measure-style>
+				<measure-style color="#40800080">
+					<measure-repeat type="start">14</measure-repeat>
+				</measure-style>
+				<measure-style>
+					<measure-repeat type="stop"/>
+				</measure-style>
+				<measure-style number="3">
+					<beat-repeat type="start" slashes="15">
+						<slash-type>maxima</slash-type>
+						<slash-dot/>
+						<slash-dot/>
+					</beat-repeat>
+				</measure-style>
+				<measure-style number="4">
+					<beat-repeat type="start" use-dots="no">
+						<slash-type>half</slash-type>
+					</beat-repeat>
+				</measure-style>
+				<measure-style number="5">
+					<beat-repeat type="start"/>
+				</measure-style>
+				<measure-style>
+					<slash type="start" use-stems="no">
+						<slash-type>16th</slash-type>
+						<slash-dot/>
+					</slash>
+				</measure-style>
+			</attributes>
+			<attributes/>
+			<harmony type="implied" print-frame="yes">
+				<!-- harmony-chord 1 -->
+				<root>
+					<root-step text="text for root-step">A</root-step>
+					<root-alter location="right" print-object="yes">3.1415</root-alter>
+				</root>
+				<kind use-symbols="yes"
+						text="test text"
+						stack-degrees="yes"
+						parentheses-degrees="yes"
+						bracket-degrees="yes"
+						halign="left">major</kind>
+				<inversion>12</inversion>
+				<bass>
+					<bass-step text="foobar">C</bass-step>
+					<bass-alter location="left">12.345</bass-alter>
+				</bass>
+				<degree print-object="no">
+					<degree-value symbol="major" text="test-text">12</degree-value>
+					<degree-alter plus-minus="yes">1.23</degree-alter>
+					<degree-type text="text for test">add</degree-type>
+				</degree>
+				<degree>
+					<degree-value symbol="diminished">23</degree-value>
+					<degree-alter>2.34</degree-alter>
+					<degree-type>alter</degree-type>
+				</degree>
+				<!-- harmony-chord 2 -->
+				<root>
+					<root-step>B</root-step>
+				</root>
+				<kind>minor</kind>
+				<bass>
+					<bass-step>D</bass-step>
+				</bass>
+				<!-- harmony-chord 3 -->
+				<function>style text</function>
+				<kind>dominant</kind>
+				<degree>
+					<degree-value>34</degree-value>
+					<degree-alter>3.45</degree-alter>
+					<degree-type>subtract</degree-type>
+				</degree>
+				<!-- frame -->
+				<frame height="10" width="9" unplayed="test" halign="left">
+					<frame-strings>5</frame-strings>
+					<frame-frets>4</frame-frets>
+					<first-fret text="foobar" location="left">3</first-fret>
+					<frame-note>
+						<string placement="above">9</string>
+						<fret>2</fret>
+						<fingering substitution="yes" alternate="yes">foobar</fingering>
+						<barre type="start"/>
+					</frame-note>
+					<frame-note>
+						<string>8</string>
+						<fret>1</fret>
+					</frame-note>
+				</frame>
+				<!-- offset -->
+				<offset sound="no">3.1415</offset>
+				<!-- editorial -->
+				<!-- footnote -->
+				<footnote justify="center">formatted text</footnote>
+				<!-- level -->
+				<level reference="yes" parentheses="no">level</level>
+				<!-- staff -->
+				<staff>10</staff>
+			</harmony>
+			<harmony>
+				<!-- harmony chord minimal -->
+				<root>
+					<root-step>C</root-step>
+				</root>
+				<kind>major</kind>
+				<bass>
+					<bass-step>E</bass-step>
+				</bass>
+				<!-- frame minimal -->
+				<frame>
+					<frame-strings>5</frame-strings>
+					<frame-frets>4</frame-frets>
+					<frame-note>
+						<string>3</string>
+						<fret>1</fret>
+					</frame-note>
+				</frame>
+				<!-- offset minimal -->
+				<offset>3.14</offset>
+				<!-- editorial only minimal level -->
+				<level>level only</level>
+			</harmony>
+			<harmony>
+				<!-- harmony chord minimal -->
+				<root>
+					<root-step>C</root-step>
+				</root>
+				<kind>major</kind>
+				<bass>
+					<bass-step>E</bass-step>
+				</bass>
+				<!-- no frame -->
+				<!-- no offset -->
+				<!-- no editorial -->
+			</harmony>
+			<backup>
+				<duration>15.14</duration>
+				<footnote>foobar</footnote>
+				<level reference="no" bracket="no" parentheses="yes" size="cue">foo</level>
+			</backup>
+			<backup>
+				<duration>14.13</duration>
+				<!-- no editorial -->
+			</backup>
+			<forward>
+				<duration>13.12</duration>
+				<footnote>test</footnote>
+				<level>test123</level>
+				<voice>voice123</voice>
+				<staff>11</staff>
+			</forward>
+			<forward>
+				<duration>12.11</duration>
+				<!-- no editorialVoice -->
+				<staff>10</staff>
+			</forward>
+			<forward>
+				<duration>11.10</duration>
+				<!-- no editorialVoice -->
+				<!-- no staff -->
+			</forward>
+			<direction>
+				<direction-type>
+					<rehearsal justify="center">rehearsal formatted text</rehearsal>
+					<rehearsal>reh test</rehearsal>
+				</direction-type>
+				<direction-type>
+					<rehearsal>reh test2</rehearsal>
+				</direction-type>
+				<direction-type>
+					<segno valign="top" halign="right"/>
+					<segno/>
+				</direction-type>
+				<direction-type>
+					<segno/>
+				</direction-type>
+				<direction-type>
+					<words xml:lang="english">word formatted text</words>
+					<words>test1</words>
+				</direction-type>
+				<direction-type>
+					<words>test2</words>
+				</direction-type>
+				<direction-type>
+					<coda halign="left"/>
+					<coda/>
+				</direction-type>
+				<direction-type>
+					<coda/>
+				</direction-type>
+				<direction-type>
+					<wedge type="crescendo" number="1" spread="10" niente="no"/>
+				</direction-type>
+				<direction-type>
+					<wedge type="diminuendo" line-type="wavy" dash-length="9.8" space-length="7.6"/>
+				</direction-type>
+				<direction-type>
+					<dynamics placement="above" enclosure="diamond">
+						<f/>
+						<ff/>
+						<fff/>
+						<other-dynamics>foobar</other-dynamics>
+					</dynamics>
+					<dynamics>
+						<fp/>
+					</dynamics>
+					<dynamics/>
+				</direction-type>
+				<direction-type>
+					<dashes type="start" number="2" dash-length="3"/>
+				</direction-type>
+				<direction-type>
+					<bracket type="start" number="4" line-end="both" end-length="5" line-type="solid"/>
+				</direction-type>
+				<direction-type>
+					<pedal type="start" line="no" sign="yes" valign="top"/>
+				</direction-type>
+				<direction-type>
+					<metronome parentheses="yes">
+						<beat-unit>half</beat-unit>
+						<beat-unit-dot/>
+						<beat-unit-dot/>
+						<per-minute>per minute</per-minute>
+					</metronome>
+				</direction-type>
+				<direction-type>
+					<metronome justify="center">
+						<beat-unit>half</beat-unit>
+						<beat-unit>whole</beat-unit>
+						<beat-unit-dot/>
+					</metronome>
+				</direction-type>
+				<direction-type>
+					<metronome>
+						<beat-unit>half</beat-unit>
+						<beat-unit-dot/>
+						<beat-unit>whole</beat-unit>
+						<beat-unit-dot/>
+					</metronome>
+				</direction-type>
+				<direction-type>
+					<metronome>
+						<metronome-note>
+							<metronome-type>eighth</metronome-type>
+							<metronome-dot/>
+							<metronome-dot/>
+							<metronome-beam number="2">begin</metronome-beam>
+							<metronome-beam>continue</metronome-beam>
+							<metronome-tuplet type="start" bracket="yes" show-number="both">
+								<actual-notes>0</actual-notes>
+								<normal-notes>1</normal-notes>
+								<normal-type>whole</normal-type>
+								<normal-dot/>
+								<normal-dot/>
+							</metronome-tuplet>
+						</metronome-note>
+						<metronome-note>
+							<metronome-type>quarter</metronome-type>
+							<metronome-dot/>
+							<metronome-beam>forward hook</metronome-beam>
+							<metronome-tuplet type="stop">
+								<actual-notes>2</actual-notes>
+								<normal-notes>3</normal-notes>
+								<normal-type>whole</normal-type>
+							</metronome-tuplet>
+						</metronome-note>
+						<metronome-note>
+							<metronome-type>half</metronome-type>
+							<metronome-tuplet type="stop">
+								<actual-notes>4</actual-notes>
+								<normal-notes>5</normal-notes>
+							</metronome-tuplet>
+						</metronome-note>
+						<metronome-relation>metr-rel</metronome-relation>
+						<metronome-note>
+							<metronome-type>half</metronome-type>
+							<metronome-tuplet type="start">
+								<actual-notes>4</actual-notes>
+								<normal-notes>5</normal-notes>
+							</metronome-tuplet>
+						</metronome-note>
+						<metronome-note>
+							<metronome-type>whole</metronome-type>
+						</metronome-note>
+					</metronome>
+				</direction-type>
+				<direction-type>
+					<metronome>
+						<metronome-note>
+							<metronome-type>breve</metronome-type>
+						</metronome-note>
+						<metronome-note>
+							<metronome-type>long</metronome-type>
+						</metronome-note>
+						<metronome-relation>metr-rel2</metronome-relation>
+						<metronome-note>
+							<metronome-type>maxima</metronome-type>
+						</metronome-note>
+					</metronome>
+				</direction-type>
+				<direction-type>
+					<metronome>
+						<metronome-note>
+							<metronome-type>1024th</metronome-type>
+						</metronome-note>
+					</metronome>
+				</direction-type>
+				<direction-type>
+					<octave-shift type="up"/>
+				</direction-type>
+				<direction-type>
+					<octave-shift type="down" number="1" size="2" space-length="3"/>
+				</direction-type>
+				<direction-type>
+					<harp-pedals>
+						<pedal-tuning>
+							<pedal-step>A</pedal-step>
+							<pedal-alter>1.1</pedal-alter>
+						</pedal-tuning>
+						<pedal-tuning>
+							<pedal-step>B</pedal-step>
+							<pedal-alter>2.2</pedal-alter>
+						</pedal-tuning>
+					</harp-pedals>
+				</direction-type>
+				<direction-type>
+					<harp-pedals>
+						<pedal-tuning>
+							<pedal-step>C</pedal-step>
+							<pedal-alter>3.3</pedal-alter>
+						</pedal-tuning>
+					</harp-pedals>
+				</direction-type>
+				<direction-type>
+					<damp/>
+				</direction-type>
+				<direction-type>
+					<damp-all/>
+				</direction-type>
+				<direction-type>
+					<eyeglasses/>
+				</direction-type>
+				<direction-type>
+					<string-mute type="on"/>
+				</direction-type>
+				<direction-type>
+					<scordatura>
+						<accord string="1">
+							<tuning-step>D</tuning-step>
+							<tuning-alter>4.4</tuning-alter>
+							<tuning-octave>4</tuning-octave>
+						</accord>
+						<accord string="2">
+							<tuning-step>E</tuning-step>
+							<tuning-octave>5</tuning-octave>
+						</accord>
+					</scordatura>
+				</direction-type>
+				<direction-type>
+					<scordatura>
+						<accord string="3">
+							<tuning-step>F</tuning-step>
+							<tuning-octave>6</tuning-octave>
+						</accord>
+					</scordatura>
+				</direction-type>
+				<direction-type>
+					<image source="source URI" type="type token" halign="left"/>
+				</direction-type>
+				<direction-type>
+					<principal-voice type="start" symbol="Hauptstimme" valign="top">p_voice</principal-voice>
+				</direction-type>
+				<direction-type>
+					<accordion-registration valign="top">
+						<accordion-high/>
+						<accordion-middle>2</accordion-middle>
+						<accordion-low/>
+					</accordion-registration>
+				</direction-type>
+				<direction-type>
+					<accordion-registration halign="right"/>
+				</direction-type>
+				<direction-type >
+					<percussion enclosure="bracket">
+						<glass>wind chimes</glass>
+					</percussion>
+					<percussion>
+						<metal>bell</metal>
+					</percussion>
+					<percussion>
+						<wood>cabasa</wood>
+					</percussion>
+					<percussion>
+						<pitched>chimes</pitched>
+					</percussion>
+					<percussion>
+						<membrane>bass drum on side</membrane>
+					</percussion>
+					<percussion>
+						<effect>anvil</effect>
+					</percussion>
+					<percussion>
+						<timpani/>
+					</percussion>
+					<percussion>
+						<beater tip="southeast">hammer</beater>
+					</percussion>
+					<percussion>
+						<beater>finger</beater>
+					</percussion>
+					<percussion>
+						<stick tip="up">
+							<stick-type>bass drum</stick-type>
+							<stick-material>soft</stick-material>
+						</stick>
+					</percussion>
+					<percussion>
+						<stick>
+							<stick-type>timpani</stick-type>
+							<stick-material>shaded</stick-material>
+						</stick>
+					</percussion>
+					<percussion>
+						<stick-location>rim</stick-location>
+					</percussion>
+					<percussion>
+						<other-percussion>other kind of perc.</other-percussion>
+					</percussion>
+				</direction-type>
+				<direction-type>
+					<other-direction print-object="yes">other direction</other-direction>
+				</direction-type>
+				<offset sound="no">12.3</offset>
+				<footnote>footnote</footnote>
+				<level>level</level>
+				<voice>voice</voice>
+				<staff>4</staff>
+				<sound tempo="1.2"
+					   dynamics="2.3"
+					   dacapo="yes"
+					   segno="abc"
+					   dalsegno="def"
+					   coda="ghi"
+					   tocoda="jkl"
+					   divisions="3.4"
+					   forward-repeat="no"
+					   fine="mno"
+					   time-only="5"
+					   pizzicato="yes"
+					   pan="-72"
+					   elevation="72"
+					   damper-pedal="yes"
+					   soft-pedal="5"
+					   sostenuto-pedal="no">
+					<!-- first -->
+					<midi-device port="8" id="P1-I1">device</midi-device>
+					<midi-instrument id="P1-I1"/>
+					<play id="P1-I1">
+						<ipa>ipa1</ipa>
+						<other-play type="token1">other</other-play>
+						<mute>solotone</mute>
+						<ipa>ipa2</ipa>
+						<semi-pitched>medium-high</semi-pitched>
+					</play>
+					<!-- second -->
+					<midi-instrument id="P1-I1"/>
+					<!-- third -->
+					<midi-device>device2</midi-device>
+					<play/>
+					<offset sound="yes">10.5</offset>
+				</sound>
+			</direction>
+			<direction>
+				<direction-type>
+					<coda/>
+				</direction-type>
+				<!-- no offset -->
+				<!-- editorial voice direction -->
+				<!-- staff -->
+				<sound>
+					<offset>5.25</offset>
+				</sound>
+			</direction>
+			<direction directive="yes" placement="above">
+				<direction-type>
+					<coda/>
+				</direction-type>
+				<!-- no offset -->
+				<!-- no editorial voice direction -->
+				<!-- no staff -->
+				<!-- no sound -->
+			</direction>
+			<note>
+				<grace steal-time-following="20" steal-time-previous="10" make-time="30" slash="no"/>
+				<chord/>
+				<pitch>
+					<step>A</step>
+					<octave>1</octave>
+				</pitch>
+				<tie type="start" time-only="6"/>
+				<tie type="stop"/>
+				<instrument id="P1-I1"/>
+				<footnote>footnote 1</footnote>
+				<level reference="no">level 1</level>
+				<voice>voice 1</voice>
+				<type size="full">eighth</type>
+				<dot placement="above"/>
+				<dot/>
+				<accidental cautionary="no" editorial="yes">slash-flat</accidental>
+				<time-modification>
+					<actual-notes>1</actual-notes>
+					<normal-notes>2</normal-notes>
+					<normal-type>quarter</normal-type>
+					<normal-dot/>
+					<normal-dot/>
+				</time-modification>
+				<stem default-x="10">down</stem>
+				<notehead filled="yes" parentheses="no">cross</notehead>
+				<notehead-text>
+					<display-text>display text 1</display-text>
+					<accidental-text>sharp</accidental-text>
+					<accidental-text>flat</accidental-text>
+					<display-text>display text 2</display-text>
+				</notehead-text>
+				<staff>12</staff>
+				<beam fan="rit">continue</beam>
+				<beam>begin</beam>
+				<notations>
+					<footnote>notation footnote</footnote>
+					<tied type="continue" number="2" line-type="dotted"/>
+					<slur type="start" dash-length="3"/>
+					<tuplet type="start" bracket="yes" show-type="both">
+						<tuplet-actual>
+							<tuplet-number>4</tuplet-number>
+							<tuplet-type>32th</tuplet-type>
+							<tuplet-dot/>
+							<tuplet-dot/>
+							<tuplet-dot/>
+						</tuplet-actual>
+						<tuplet-normal>
+							<tuplet-type>16th</tuplet-type>
+						</tuplet-normal>
+					</tuplet>
+					<tuplet type="stop" show-number="actual"/>
+					<glissando type="start">gliss.</glissando>
+					<slide type="stop" number="4" beats="3.14">slide.</slide>
+					<ornaments>
+						<trill-mark placement="above"/>
+						<turn slash="no"/>
+						<delayed-turn/>
+						<inverted-turn/>
+						<delayed-inverted-turn/>
+						<vertical-turn start-note="main" two-note-turn="whole" accelerate="yes"/>
+						<shake/>
+						<wavy-line type="stop" number="5" placement="above"/>
+						<mordent long="no" approach="above" departure="below" placement="above"/>
+						<inverted-mordent long="yes"/>
+						<accidental-mark>natural</accidental-mark>
+						<accidental-mark>sharp</accidental-mark>
+						<schleifer/>
+						<tremolo type="start">8</tremolo>
+						<tremolo>7</tremolo>
+						<other-ornament>first other ornament</other-ornament>
+						<accidental-mark>flat</accidental-mark>
+						<other-ornament>second other ornament</other-ornament>
+					</ornaments>
+					<ornaments/>
+					<technical>
+						<up-bow placement="below"/>
+						<up-bow default-x="5"/>
+						<down-bow/>
+						<harmonic>
+							<natural/>
+							<base-pitch/>
+						</harmonic>
+						<harmonic>
+							<artificial/>
+							<touching-pitch/>
+						</harmonic>
+						<harmonic>
+							<sounding-pitch/>
+						</harmonic>
+						<harmonic/>
+						<open-string/>
+						<thumb-position/>
+						<fingering substitution="yes" alternate="no" placement="below">finger ring</fingering>
+						<pluck>plukjes</pluck>
+						<double-tongue/>
+						<triple-tongue/>
+						<stopped/>
+						<snap-pizzicato/>
+						<fret>21</fret>
+						<string placement="above">3</string>
+						<hammer-on type="start">hammer 1</hammer-on>
+						<pull-off type="stop" number="4">hammer 2</pull-off>
+						<bend beats="2">
+							<bend-alter>3.14</bend-alter>
+							<pre-bend/>
+							<with-bar>met bar</with-bar>
+						</bend>
+						<bend beats="5">
+							<bend-alter>1.4142</bend-alter>
+							<release/>
+						</bend>
+						<tap>tapjes</tap>
+						<heel substitution="no"/>
+						<toe/>
+						<fingernails/>
+						<hole>
+							<hole-type>type</hole-type>
+							<hole-closed location="bottom">half</hole-closed>
+							<hole-shape>shape</hole-shape>
+						</hole>
+						<hole>
+							<hole-closed>no</hole-closed>
+						</hole>
+						<arrow>
+							<arrow-direction>right</arrow-direction>
+							<arrow-style>filled</arrow-style>
+						</arrow>
+						<arrow>
+							<circular-arrow>anticlockwise</circular-arrow>
+						</arrow>
+						<handbell>echo</handbell>
+						<other-technical>other</other-technical>
+					</technical>
+					<technical/>
+					<articulations>
+						<accent/>
+						<strong-accent type="down"/>
+						<strong-accent/>
+						<staccato/>
+						<tenuto/>
+						<detached-legato/>
+						<staccatissimo/>
+						<spiccato/>
+						<scoop line-shape="curved" line-type="dashed"/>
+						<plop dash-length="5" space-length="4"/>
+						<doit space-length="3"/>
+						<falloff/>
+						<breath-mark>comma</breath-mark>
+						<caesura/>
+						<stress/>
+						<unstress/>
+						<other-articulation>other articulation</other-articulation>
+					</articulations>
+					<articulations/>
+					<dynamics enclosure="bracket" underline="2" overline="1" line-through="3">
+						<p/>
+						<pp/>
+						<ppp/>
+						<pppp/>
+						<ppppp/>
+						<pppppp/>
+						<f/>
+						<ff/>
+						<fff/>
+						<ffff/>
+						<fffff/>
+						<ffffff/>
+						<mp/>
+						<mf/>
+						<sf/>
+						<sfp/>
+						<sfpp/>
+						<fp/>
+						<rf/>
+						<rfz/>
+						<sfz/>
+						<sffz/>
+						<fz/>
+						<other-dynamics>other dynamic</other-dynamics>
+					</dynamics>
+					<dynamics/>
+					<fermata type="inverted">normal</fermata>
+					<fermata/>
+					<arpeggiate number="2" direction="up" placement="above"/>
+					<arpeggiate/>
+					<non-arpeggiate number="6" type="bottom"/>
+					<non-arpeggiate type="top"/>
+					<accidental-mark>flat</accidental-mark>
+					<other-notation type="stop" number="3">other notation 1</other-notation>
+					<other-notation type="single">other notation 2</other-notation>
+				</notations>
+				<notations>
+					<tied type="start"/>
+				</notations>
+				<notations>
+					<level>notation level</level>
+				</notations>
+				<lyric>
+					<syllabic>single</syllabic>
+					<text underline="1" rotation="30">lyric 1</text>
+					<elision>elision 1</elision>
+					<syllabic>begin</syllabic>
+					<text>lyric 2</text>
+					<elision>elision 2</elision>
+					<text>lyric 3</text>
+					<text>lyric 4</text>
+					<extend type="start"/>
+					<end-line/>
+					<end-paragraph/>
+					<footnote>lyric footnote</footnote>
+					<level reference="no" parentheses="no" bracket="no" size="cue">lyric level</level>
+				</lyric>
+				<lyric>
+					<text>lyric 5</text>
+					<extend type="continue"/>
+				</lyric>
+				<lyric>
+					<extend type="stop"/>
+				</lyric>
+				<lyric number="11" name="laughing lyric" justify="left" placement="below" print-object="no">
+					<laughing/>
+				</lyric>
+				<lyric>
+					<humming/>
+				</lyric>
+				<play id="P1-I1"/>
+			</note>
+			<note>
+				<cue/>
+				<unpitched>
+					<display-step>A</display-step>
+					<display-octave>4</display-octave>
+				</unpitched>
+				<duration>3</duration>
+				<dot/>
+				<accidental>flat</accidental>
+				<time-modification>
+					<actual-notes>3</actual-notes>
+					<normal-notes>4</normal-notes>
+					<normal-type>half</normal-type>
+				</time-modification>
+				<stem>double</stem>
+				<notehead>x</notehead>
+				<notehead-text>
+					<accidental-text>flat</accidental-text>
+				</notehead-text>
+				<beam number="2">end</beam>
+			</note>
+			<note>
+				<rest>
+					<display-step>B</display-step>
+					<display-octave>1</display-octave>
+				</rest>
+				<duration>2</duration>
+				<time-modification>
+					<actual-notes>5</actual-notes>
+					<normal-notes>6</normal-notes>
+				</time-modification>
+			</note>
+			<note dynamics="3.14" end-dynamics="1.4142" attack="5" release="4" time-only="1" pizzicato="yes">
+				<rest measure="yes"/>
+				<duration>1</duration>
+			</note>
+			<figured-bass>
+				<figure>
+					<prefix>prefix 1</prefix>
+					<figure-number>figure number 1</figure-number>
+					<suffix>suffix 1</suffix>
+					<extend type="continue"/>
+				</figure>
+				<figure>
+					<suffix>suffix 2</suffix>
+				</figure>
+				<duration>3</duration>
+				<footnote>figured bass footnote</footnote>
+				<level reference="no">figured bass level</level>
+			</figured-bass>
+			<figured-bass>
+				<figure/>
+				<level>figured bass level 2</level>
+			</figured-bass>
+			<figured-bass parentheses="yes">
+				<figure/>
+			</figured-bass>
+			<sound
+				tempo="2.68" dynamics="3.14" dacapo="no" segno="mySegno" dalsegno="myDalsegno"
+				coda="myCoda" tocoda="myTocoda" divisions="-1.4142" forward-repeat="yes"
+				fine="myFine" time-only="12569, 686923, 6694" pizzicato="no" pan="53"
+				elevation="35" damper-pedal="4" soft-pedal="no" sostenuto-pedal="yes"/>
+			<barline>
+				<bar-style>light-light</bar-style>
+				<wavy-line type="stop" number="3"/>
+				<segno/>
+				<coda/>
+				<fermata type="upright">angled</fermata>
+				<fermata>normal</fermata>
+				<ending number="12345" type="discontinue">myEnding</ending>
+				<repeat direction="forward" times="21" winged="double-curved"/>
+			</barline>
+			<barline location="right" segno="mySegno" coda="myCoda" divisions="12.345"/>
+			<grouping type="single">
+				<feature type="type1">feature 1</feature>
+				<feature>feature 2</feature>
+			</grouping>
+			<grouping type="start" number="2" member-of="myMemberOf"/>
+			<link xlink:href="http://www.google.com/"
+				  name="link name" element="abc" position="123"/>
+			<bookmark id="abc" name="myName" position="123" element="elem"/>
+		</measure>
+		<measure number="1_2"/>
+	</part>
+</score-partwise>

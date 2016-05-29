@@ -306,6 +306,13 @@ object Complex {
 			*/
 		case class StaffTuning(tuning: Tuning, line: Option[StaffLine] = Option.empty)
 
+		sealed abstract class TimeChoice
+		case class SignatureTimeChoice(timeSignature: List[TimeSignature],
+																	 interchangeable: Option[Interchangeable] = Option.empty) extends TimeChoice {
+			require(timeSignature.nonEmpty)
+		}
+		case class SenzaMisuraTimeChoice(s: String) extends TimeChoice
+
 		/**
 			* Time signatures are represented by the beats element for the numerator and the beat-type element
 			* for the denominator. The symbol attribute is used indicate common and cut time symbols as well as
@@ -322,12 +329,6 @@ object Complex {
 			* element content indicates the symbol to be used, if any, such as an X. The time element's symbol
 			* attribute is not used when a senza-misura element is present.
 			*/
-		sealed abstract class TimeChoice
-		case class SignatureTimeChoice(timeSignature: List[TimeSignature],
-															interchangeable: Option[Interchangeable] = Option.empty) extends TimeChoice {
-			require(timeSignature.nonEmpty)
-		}
-		case class SenzaMisuraTimeChoice(s: String) extends TimeChoice
 		case class Time(timeChoice: TimeChoice,
 										number: Option[StaffNumber] = Option.empty,
 										symbol: Option[TimeSymbol] = Option.empty,
@@ -2624,7 +2625,6 @@ object Complex {
 		/**
 			* The empty-font type represents an empty element with font attributes.
 			*/
-		// TODO type alias???
 		case class EmptyFont(font: Font = Font())
 
 		/**
