@@ -68,13 +68,12 @@ trait GroupParser extends ComplexParser {
 			xmlToFormattedText("footnote")
 		}
 
-		// TODO delete this???
 		def xmlToLevel: XmlParser[Level] = {
 			xmlToLevel("level")
 		}
 
 		def xmlToStaff: XmlParser[Staff] = {
-			xmlToString("staff").map(_.toInt).map(Staff)
+			xmlToString("staff").map(s => Staff(s.toInt))
 		}
 
 		def xmlToTuning: XmlParser[Tuning] = {

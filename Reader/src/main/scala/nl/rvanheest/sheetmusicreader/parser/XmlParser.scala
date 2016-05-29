@@ -36,7 +36,7 @@ trait XmlParser extends ParserCombinators {
 	}
 
 	def attribute[T](attr: String)(constructor: String => T): XmlParser[T] = {
-		attributeItem.map(n => n \@ attr).satisfy(_.nonEmpty).flatMap(x => {
+		attributeItem.map(_ \@ attr).satisfy(_.nonEmpty).flatMap(x => {
 			try { Parser.from(constructor(x)) }
 			catch { case e: Throwable => Parser.failure }
 		})

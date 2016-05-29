@@ -35,9 +35,13 @@ trait PrimativesParser extends XmlParser {
 			}
 		}
 
-		def fifths(name: String)(parser: PrimativeParser[Fifths]) = parser(name)(_.toInt)
+		def fifths(name: String)(parser: PrimativeParser[Fifths]) = {
+			parser(name)(_.toInt)
+		}
 
-		def mode(name: String)(parser: PrimativeParser[Mode]) = parser(name)(identity)
+		def mode(name: String)(parser: PrimativeParser[Mode]) = {
+			parser(name)(identity)
+		}
 
 		def showFrets(name: String)(parser: PrimativeParser[ShowFrets]) = {
 			parser(name) {
@@ -47,9 +51,13 @@ trait PrimativesParser extends XmlParser {
 			}
 		}
 
-		def staffLine(name: String)(parser: PrimativeParser[StaffLine]) = parser(name)(_.toInt)
+		def staffLine(name: String)(parser: PrimativeParser[StaffLine]) = {
+			parser(name)(_.toInt)
+		}
 
-		def staffNumber(name: String)(parser: PrimativeParser[StaffNumber]) = parser(name)(s => StaffNumber(s.toInt))
+		def staffNumber(name: String)(parser: PrimativeParser[StaffNumber]) = {
+			parser(name)(s => StaffNumber(s.toInt))
+		}
 
 		def staffType(name: String)(parser: PrimativeParser[StaffType]) = {
 			parser(name) {
@@ -124,7 +132,9 @@ trait PrimativesParser extends XmlParser {
 			}
 		}
 
-		def endingNumber(name: String)(parser: PrimativeParser[EndingNumber]) = parser(name)(EndingNumber)
+		def endingNumber(name: String)(parser: PrimativeParser[EndingNumber]) = {
+			parser(name)(EndingNumber)
+		}
 
 		def rightLeftMiddle(name: String)(parser: PrimativeParser[RightLeftMiddle]) = {
 			parser(name) {
@@ -508,7 +518,9 @@ trait PrimativesParser extends XmlParser {
 			yesNo(name)(yesNoParser).map(YNN_YesNo) <|> parser(name)(s => YNN_Double(s.toDouble))
 		}
 
-		def date(name: String)(parser: PrimativeParser[Date]) = parser(name)(Date)
+		def date(name: String)(parser: PrimativeParser[Date]) = {
+			parser(name)(Date)
+		}
 	}
 
 	trait PrimativeDirectionParser {
@@ -830,9 +842,13 @@ trait PrimativesParser extends XmlParser {
 	}
 
 	trait PrimativeLayoutParser {
-		def distanceType(name: String)(parser: PrimativeParser[DistanceType]) = parser(name)(identity)
+		def distanceType(name: String)(parser: PrimativeParser[DistanceType]) = {
+			parser(name)(identity)
+		}
 
-		def lineWidthType(name: String)(parser: PrimativeParser[LineWidthType]) = parser(name)(identity)
+		def lineWidthType(name: String)(parser: PrimativeParser[LineWidthType]) = {
+			parser(name)(identity)
+		}
 
 		def marginType(name: String)(parser: PrimativeParser[MarginType]) = {
 			parser(name) {
@@ -843,7 +859,9 @@ trait PrimativesParser extends XmlParser {
 			}
 		}
 
-		def millimeters(name: String)(parser: PrimativeParser[Millimeters]) = parser(name)(_.toDouble)
+		def millimeters(name: String)(parser: PrimativeParser[Millimeters]) = {
+			parser(name)(_.toDouble)
+		}
 
 		def noteSizeType(name: String)(parser: PrimativeParser[NoteSizeType]) = {
 			parser(name) {
@@ -1053,9 +1071,13 @@ trait PrimativesParser extends XmlParser {
 			}
 		}
 
-		def octave(name: String)(parser: PrimativeParser[Octave]) = parser(name)(s => Octave(s.toInt))
+		def octave(name: String)(parser: PrimativeParser[Octave]) = {
+			parser(name)(s => Octave(s.toInt))
+		}
 
-		def semitones(name: String)(parser: PrimativeParser[Semitones]) = parser(name)(_.toDouble)
+		def semitones(name: String)(parser: PrimativeParser[Semitones]) = {
+			parser(name)(_.toDouble)
+		}
 
 		def showTuplet(name: String)(parser: PrimativeParser[ShowTuplet]) = {
 			parser(name) {
@@ -1099,7 +1121,9 @@ trait PrimativesParser extends XmlParser {
 			}
 		}
 
-		def tremoloMarks(name: String)(parser: PrimativeParser[TremoloMarks]) = parser(name)(s => TremoloMarks(s.toInt))
+		def tremoloMarks(name: String)(parser: PrimativeParser[TremoloMarks]) = {
+			parser(name)(s => TremoloMarks(s.toInt))
+		}
 	}
 
 	trait PrimativeScoreParser {

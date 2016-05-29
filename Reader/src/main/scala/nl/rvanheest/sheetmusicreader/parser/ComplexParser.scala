@@ -214,8 +214,7 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexBarlineParser extends GroupCommonParser with
-																		 PrimativeBarlineParser {
+	trait ComplexBarlineParser extends GroupCommonParser with PrimativeBarlineParser {
 
 		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexBarline._
 		import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline.RLM_Right
@@ -271,8 +270,7 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexCommonParser extends AttributeGroupsCommonParser with
-																		PrimativeNoteParser {
+	trait ComplexCommonParser extends AttributeGroupsCommonParser with PrimativeNoteParser {
 
 		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon._
 
@@ -1195,8 +1193,7 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexLinkParser extends AttributeGroupsCommonParser with
-																	AttributeGroupsLinkParser {
+	trait ComplexLinkParser extends AttributeGroupsCommonParser with AttributeGroupsLinkParser {
 
 		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexLink._
 
@@ -1481,6 +1478,29 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 
 		def xmlToLyric(name: String): XmlParser[Lyric] = {
+			def toElisionSyllabic = {
+				for {
+					elision <- xmlToTextFontColor("elision")
+					syllabic <- syllabic("syllabic")(node).maybe
+				} yield ElisionSyllabic(elision, syllabic)
+			}
+
+			def toElisionSyllabicText = {
+				for {
+					subSeq <- toElisionSyllabic.maybe
+					text <- xmlToTextElementData("text")
+				} yield ElisionSyllabicText(subSeq, text)
+			}
+
+			def toTextLyricsChoice = {
+				for {
+					s <- syllabic("syllabic")(node).maybe
+					text <- xmlToTextElementData("text")
+					seq <- toElisionSyllabicText.many
+					extend <- xmlToExtend("extend").maybe
+				} yield TextLyricsChoice(s, text, seq, extend)
+			}
+
 			for {
 				number <- attributeId("number").maybe
 				n <- attributeId("name").maybe
@@ -1491,18 +1511,7 @@ trait ComplexParser extends AttributeGroupsParser {
 				printObject <- xmlToPrintObject
 				lyric <- branchNode(name) {
 					for {
-						choice <- (for {
-							s <- syllabic("syllabic")(node).maybe
-							text <- xmlToTextElementData("text")
-							seq <- (for {
-								subSeq <- (for {
-									elision <- xmlToTextFontColor("elision")
-									syllabic <- syllabic("syllabic")(node).maybe
-								} yield ElisionSyllabic(elision, syllabic)).maybe
-								text <- xmlToTextElementData("text")
-							} yield ElisionSyllabicText(subSeq, text)).many
-							extend <- xmlToExtend("extend").maybe
-						} yield TextLyricsChoice(s, text, seq, extend))
+						choice <- toTextLyricsChoice
 							.orElse(xmlToExtend("extend").map(ExtendLyricsChoice))
 							.orElse(xmlToEmpty("laughing").map(LaughingLyricsChoice))
 							.orElse(xmlToEmpty("humming").map(HummingLyricsChoice))
@@ -1561,6 +1570,30 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 
 		def xmlToNote(name: String): XmlParser[Note] = {
+			def toGraceNoteChoice = {
+				for {
+					grace <- xmlToGrace("grace")
+					fullNote <- xmlToFullNote
+					tie <- xmlToTie("tie").many
+				} yield GraceNoteChoice(grace, fullNote, tie)
+			}
+
+			def toCueNoteChoice = {
+				for {
+					cue <- xmlToEmpty("cue")
+					fullNote <- xmlToFullNote
+					duration <- xmlToDuration
+				} yield CueNoteChoice(cue, fullNote, duration)
+			}
+
+			def toFullNoteChoice = {
+				for {
+					fullNote <- xmlToFullNote
+					duration <- xmlToDuration
+					tie <- xmlToTie("tie").many
+				} yield FullNoteChoice(fullNote, duration, tie)
+			}
+
 			for {
 				xPosition <- xmlToXPosition
 				font <- xmlToFont
@@ -1574,21 +1607,7 @@ trait ComplexParser extends AttributeGroupsParser {
 				pizzicato <- yesNo("pizzicato")(attribute).maybe
 				note <- branchNode(name) {
 					for {
-						choice <- (for {
-							grace <- xmlToGrace("grace")
-							fullNote <- xmlToFullNote
-							tie <- xmlToTie("tie").many
-						} yield GraceNoteChoice(grace, fullNote, tie))
-							.orElse(for {
-								cue <- xmlToEmpty("cue")
-								fullNote <- xmlToFullNote
-								duration <- xmlToDuration
-							} yield CueNoteChoice(cue, fullNote, duration))
-							.orElse(for {
-								fullNote <- xmlToFullNote
-								duration <- xmlToDuration
-								tie <- xmlToTie("tie").many
-							} yield FullNoteChoice(fullNote, duration, tie))
+						choice <- toGraceNoteChoice <|> toCueNoteChoice <|> toFullNoteChoice
 						instrument <- xmlToInstrument("instrument").maybe
 						edVoice <- xmlToEditorialVoice
 						nType <- xmlToNoteType("type").maybe
@@ -1823,14 +1842,18 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 
 		def xmlToTimeModification(name: String): XmlParser[TimeModification] = {
+			def toTuple = {
+				for {
+					normalType <- noteTypeValue("normal-type")(node)
+					normalDot <- xmlToEmpty("normal-dot").many
+				} yield (normalType, normalDot)
+			}
+
 			branchNode(name) {
 				for {
 					actual <- node("actual-notes")(_.toInt)
 					normal <- node("normal-notes")(_.toInt)
-					seq <- (for {
-						normalType <- noteTypeValue("normal-type")(node)
-						normalDot <- xmlToEmpty("normal-dot").many
-					} yield (normalType, normalDot)).maybe
+					seq <- toTuple.maybe
 				} yield TimeModification(actual, normal, seq)
 			}
 		}
@@ -1911,6 +1934,21 @@ trait ComplexParser extends AttributeGroupsParser {
 		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexScore._
 
 		def xmlToCredit(name: String): XmlParser[Credit] = {
+			def toLinksBookmarksCreditWords = {
+				for {
+					links <- xmlToLink("link").many
+					bookmarks <- xmlToBookmark("bookmark").many
+					creditWords <- xmlToFormattedText("credit-words")
+				} yield (links, bookmarks, creditWords)
+			}
+
+			def toCreditPairChoice = {
+				for {
+					words <- xmlToFormattedText("credit-words")
+					seq <- toLinksBookmarksCreditWords.many
+				} yield CreditPairChoice(words, seq)
+			}
+
 			for {
 				page <- attribute("page")(_.toInt).maybe
 				credit <- branchNode(name) {
@@ -1918,15 +1956,7 @@ trait ComplexParser extends AttributeGroupsParser {
 						creditType <- xmlToString("credit-type").many
 						link <- xmlToLink("link").many
 						bookmark <- xmlToBookmark("bookmark").many
-						choice <- xmlToImage("credit-image").map(CreditImageChoice)
-							.orElse(for {
-								words <- xmlToFormattedText("credit-words")
-								seq <- (for {
-									links <- xmlToLink("link").many
-									bookmarks <- xmlToBookmark("bookmark").many
-									creditWords <- xmlToFormattedText("credit-words")
-								} yield (links, bookmarks, creditWords)).many
-							} yield CreditPairChoice(words, seq))
+						choice <- xmlToImage("credit-image").map(CreditImageChoice) <|> toCreditPairChoice
 					} yield Credit(creditType, link, bookmark, choice, page)
 				}
 			} yield credit
@@ -2011,8 +2041,7 @@ trait ComplexParser extends AttributeGroupsParser {
 						barline <- xmlToGroupBarline("group-barline").maybe
 						time <- xmlToEmpty("group-time").maybe
 						editorial <- xmlToEditorial
-					} yield PartGroup(n, nameDisplay, abbreviation, abbreviationDisplay, symbol, barline, time,
-						editorial, ssType, number)
+					} yield PartGroup(n, nameDisplay, abbreviation, abbreviationDisplay, symbol, barline, time, editorial, ssType, number)
 				}
 			} yield partGroup
 		}
@@ -2054,6 +2083,13 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 
 		def xmlToScorePart(name: String): XmlParser[ScorePart] = {
+			def toDeviceAndInstrument = {
+				for {
+					device <- xmlToMidiDevice("midi-device").maybe
+					instrument <- xmlToMidiInstrument("midi-instrument").maybe
+				} yield (device, instrument)
+			}
+
 			for {
 				id <- attributeId("id")
 				scorePart <- branchNode(name) {
@@ -2065,10 +2101,7 @@ trait ComplexParser extends AttributeGroupsParser {
 						abbrDisplay <- xmlToNameDisplay("part-abbreviation-display").maybe
 						group <- xmlToString("group").many
 						instr <- xmlToScoreInstrument("score-instrument").many
-						midi <- (for {
-							device <- xmlToMidiDevice("midi-device").maybe
-							instrument <- xmlToMidiInstrument("midi-instrument").maybe
-						} yield (device, instrument)).takeUntil { case (dev, ins) => dev.isEmpty && ins.isEmpty }
+						midi <- toDeviceAndInstrument.takeUntil { case (dev, ins) => dev.isEmpty && ins.isEmpty }
 					} yield ScorePart(ident, n, nameDisplay, abbr, abbrDisplay, group, instr, midi, id)
 				}
 			} yield scorePart
