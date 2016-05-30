@@ -22,12 +22,7 @@ trait ParserCombinators {
 		}
 
 		def doOnNext[Ignore](f: A => Ignore): Parser[S, A] = {
-			Parser(input => this.parse(input) match {
-				case result@Some((v, _)) =>
-					f(v)
-					result
-				case None => None
-			})
+			map(a => { f(a); a })
 		}
 
 		def flatMap[B](f: A => Parser[S, B]): Parser[S, B] = this >>= f
@@ -43,33 +38,19 @@ trait ParserCombinators {
 		def >>[B](other: => Parser[S, B]): Parser[S, B] = {
 			this >>= (_ => other)
 		}
+
 		def <<[B](other: => Parser[S, B]): Parser[S, A] = {
 			this >>= (x => other >> from(x))
 		}
 
-		def satisfy(predicate: A => Boolean): Parser[S, A] = {
-			for {
-				x <- this
-				z <- if (predicate(x)) from[S, A](x) else failure[S, A]
-			} yield z
-		}
-
 		def filter(predicate: A => Boolean): Parser[S, A] = satisfy(predicate)
+		def satisfy(predicate: A => Boolean): Parser[S, A] = {
+			this >>= (x => if (predicate(x)) from(x) else failure)
+		}
 
 		def maybe: Parser[S, Option[A]] = map(Option(_)) <|> from(Option.empty)
 
-		def many: Parser[S, List[A]] = {
-			atLeastOnce <|> from(List())
-		}
-
-		def takeUntil(predicate: A => Boolean): Parser[S, List[A]] = {
-			def not(predicate: A => Boolean): A => Boolean = !predicate(_)
-			this.takeWhile(not(predicate))
-		}
-
-		def takeWhile(predicate: A => Boolean): Parser[S, List[A]] = {
-			this.satisfy(predicate).many
-		}
+		def many: Parser[S, List[A]] = atLeastOnce <|> from(List())
 
 		def atLeastOnce: Parser[S, List[A]] = {
 			for {
@@ -78,12 +59,24 @@ trait ParserCombinators {
 			} yield v :: vs
 		}
 
+		def takeUntil(predicate: A => Boolean): Parser[S, List[A]] = {
+			def not(predicate: A => Boolean): A => Boolean = !predicate(_)
+			takeWhile(not(predicate))
+		}
+
+		def takeWhile(predicate: A => Boolean): Parser[S, List[A]] = {
+			satisfy(predicate).many
+		}
+
 		def separatedBy[Sep](sep: Parser[S, Sep]): Parser[S, List[A]] = {
-			this.separatedBy1(sep) <|> from(List())
+			separatedBy1(sep) <|> from(List())
 		}
 
 		def separatedBy1[Sep](sep: Parser[S, Sep]): Parser[S, List[A]] = {
-			this >>= (x => (sep >> this).many.map(x::_))
+			for {
+				x <- this
+				xs <- (sep >> this).many
+			} yield x :: xs
 		}
 	}
 	object Parser {
