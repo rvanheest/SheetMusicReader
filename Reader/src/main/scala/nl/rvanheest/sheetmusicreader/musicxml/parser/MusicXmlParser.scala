@@ -1,14 +1,18 @@
-package nl.rvanheest.sheetmusicreader.parser
+package nl.rvanheest.sheetmusicreader.musicxml.parser
 
-import nl.rvanheest.sheetmusicreader.musicxml.model.Root.{ScorePartwise, ScoreTimewise}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Root.{PartScoreTimewise, _}
 
-import scala.xml.Node
+trait MusicXmlParser {
+	this: GroupParser with AttributeGroupsParser with XmlParser with ParserCombinators =>
 
-trait MusicXmlParser extends GroupParser {
+	protected val rootParser = new RootParser
 
-	class RootParser extends GroupScoreParser {
+	class RootParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Root._
+		import attributeGroupsCommonParser._
+		import attributeGroupsScoreParser._
+		import groupScoreParser._
+		import xmlParser._
 
 		def xmlToScorePartwise: XmlParser[ScorePartwise] = {
 			for {
@@ -64,12 +68,21 @@ trait MusicXmlParser extends GroupParser {
 	}
 
 	def partwise: XmlParser[ScorePartwise] = {
-		val parser = new RootParser
-		parser.xmlToScorePartwise
+		rootParser.xmlToScorePartwise
 	}
 
-	def timewise(xml: Node): XmlParser[ScoreTimewise] = {
-		val parser = new RootParser
-		parser.xmlToScoreTimewise
+	def timewise: XmlParser[ScoreTimewise] = {
+		rootParser.xmlToScoreTimewise
+	}
+}
+
+object MusicXmlParser {
+	def parser: MusicXmlParser = {
+		new MusicXmlParser
+								with GroupParser
+								with ComplexParser
+								with AttributeGroupsParser
+								with PrimativesParser
+								with XmlParser
 	}
 }

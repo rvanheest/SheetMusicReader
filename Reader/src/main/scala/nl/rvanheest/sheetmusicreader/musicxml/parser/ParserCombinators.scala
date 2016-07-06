@@ -1,6 +1,8 @@
-package nl.rvanheest.sheetmusicreader.parser
+package nl.rvanheest.sheetmusicreader.musicxml.parser
 
 trait ParserCombinators {
+
+
 
 	class Parser[S, +A](parser: S => Option[(A, S)]) {
 

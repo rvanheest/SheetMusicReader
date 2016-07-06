@@ -1,14 +1,41 @@
-package nl.rvanheest.sheetmusicreader.parser
+package nl.rvanheest.sheetmusicreader.musicxml.parser
 
-trait ComplexParser extends AttributeGroupsParser {
-	self: GroupParser =>
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexAttributes._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexBarline.{BarStyleColor, Barline, Ending, Repeat}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexDirection.{MetronomeTuplet, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexIdentity._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexLayout._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexLink.{Bookmark, Link}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexNote.{Tied, TimeModification, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexScore.{Work, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline.RLM_Right
+import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
 
-	trait ComplexAttributesParser extends GroupCommonParser with
-																				PrimativeAttributesParser with
-																				PrimativeScoreParser {
-		self: GroupAttributesParser =>
+trait ComplexParser {
+	this: GroupParser with AttributeGroupsParser with PrimativesParser with XmlParser with ParserCombinators =>
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexAttributes._
+	protected val complexAttributesParser = new ComplexAttributesParser
+	protected val complexBarlineParser = new ComplexBarlineParser
+	protected val complexCommonParser = new ComplexCommonParser
+	protected val complexDirectionParser = new ComplexDirectionParser
+	protected val complexIdentityParser = new ComplexIdentityParser
+	protected val complexLayoutParser = new ComplexLayoutParser
+	protected val complexLinkParser = new ComplexLinkParser
+	protected val complexNoteParser = new ComplexNoteParser
+	protected val complexScoreParser = new ComplexScoreParser
+
+	class ComplexAttributesParser {
+
+		import attributeGroupsCommonParser._
+		import complexCommonParser._
+		import groupAttributesParser._
+		import groupCommonParser._
+		import xmlParser._
+		import primativeAttributesParser._
+		import primativeCommonParser._
+		import primativeNoteParser._
+		import primativeScoreParser._
 
 		def xmlToDirective(name: String): XmlParser[Directive] = {
 			for {
@@ -42,7 +69,7 @@ trait ComplexParser extends AttributeGroupsParser {
 				beatRepeatType <- startStop("type")(attribute)
 				slashes <- attribute("slashes")(_.toInt).maybe
 				useDots <- yesNo("use-dots")(attribute).maybe
-				slash <- branchNode(name)(xmlToSlash.maybe)
+				slash <- branchNode(name)(groupAttributesParser.xmlToSlash.maybe)
 			} yield BeatRepeat(slash, beatRepeatType, slashes, useDots)
 		}
 
@@ -151,7 +178,7 @@ trait ComplexParser extends AttributeGroupsParser {
 				ssType <- startStop("type")(attribute)
 				useDots <- yesNo("use-dots")(attribute).maybe
 				useStems <- yesNo("use-stems")(attribute).maybe
-				slash <- branchNode(name)(xmlToSlash.maybe)
+				slash <- branchNode(name)(groupAttributesParser.xmlToSlash.maybe)
 			} yield Slash(slash, ssType, useDots, useStems)
 		}
 
@@ -214,10 +241,14 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexBarlineParser extends GroupCommonParser with PrimativeBarlineParser {
+	class ComplexBarlineParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexBarline._
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline.RLM_Right
+		import attributeGroupsCommonParser._
+		import complexCommonParser._
+		import groupCommonParser._
+		import xmlParser._
+		import primativeBarlineParser._
+		import primativeCommonParser._
 
 		def xmlToBarStyleColor(name: String): XmlParser[BarStyleColor] = {
 			for {
@@ -270,9 +301,12 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexCommonParser extends AttributeGroupsCommonParser with PrimativeNoteParser {
+	class ComplexCommonParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon._
+		import attributeGroupsCommonParser._
+		import xmlParser._
+		import primativeCommonParser._
+		import primativeNoteParser._
 
 		def xmlToAccidentalText(name: String): XmlParser[AccidentalText] = {
 			for {
@@ -492,15 +526,20 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexDirectionParser extends GroupLayoutParser with
-																			 GroupNoteParser with
-																			 ComplexNoteParser with
-																			 AttributeGroupsDirectionParser with
-																			 PrimativeDirectionParser {
-		self: GroupDirectionParser =>
+	class ComplexDirectionParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexDirection._
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
+		import attributeGroupsCommonParser._
+		import attributeGroupsDirectionParser._
+		import complexCommonParser._
+		import complexLayoutParser._
+		import complexNoteParser._
+		import groupCommonParser._
+		import groupDirectionParser._
+		import groupLayoutParser._
+		import xmlParser._
+		import primativeCommonParser._
+		import primativeDirectionParser._
+		import primativeNoteParser._
 
 		def xmlToAccord(name: String): XmlParser[Accord] = {
 			for {
@@ -1030,9 +1069,11 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexIdentityParser extends ComplexCommonParser {
+	class ComplexIdentityParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexIdentity._
+		import complexCommonParser._
+		import xmlParser._
+		import primativeCommonParser._
 
 		def xmlToEncoding(name: String): XmlParser[Encoding] = {
 			branchNode(name) {
@@ -1083,12 +1124,14 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexLayoutParser extends ComplexCommonParser with
-																		PrimativeAttributesParser with
-																		PrimativeLayoutParser {
-		self: GroupLayoutParser =>
+	class ComplexLayoutParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexLayout._
+		import complexCommonParser._
+		import groupLayoutParser._
+		import xmlParser._
+		import primativeAttributesParser._
+		import primativeCommonParser._
+		import primativeLayoutParser._
 
 		def xmlToAppearance(name: String): XmlParser[Appearance] = {
 			branchNode(name) {
@@ -1193,9 +1236,11 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexLinkParser extends AttributeGroupsCommonParser with AttributeGroupsLinkParser {
+	class ComplexLinkParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexLink._
+		import attributeGroupsCommonParser._
+		import attributeGroupsLinkParser._
+		import xmlParser._
 
 		def xmlToBookmark(name: String): XmlParser[Bookmark] = {
 			for {
@@ -1217,11 +1262,15 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexNoteParser extends GroupCommonParser {
-		self: GroupNoteParser =>
+	class ComplexNoteParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexNote._
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
+		import attributeGroupsCommonParser._
+		import complexCommonParser._
+		import groupCommonParser._
+		import groupNoteParser._
+		import xmlParser._
+		import primativeCommonParser._
+		import primativeNoteParser._
 
 		def xmlToAccidental(name: String): XmlParser[Accidental] = {
 			for {
@@ -1925,13 +1974,21 @@ trait ComplexParser extends AttributeGroupsParser {
 		}
 	}
 
-	trait ComplexScoreParser extends GroupDirectionParser with
-																	 ComplexIdentityParser with
-																	 ComplexLinkParser with
-																	 AttributeGroupsScoreParser {
-		self: GroupScoreParser =>
+	class ComplexScoreParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexScore._
+		import attributeGroupsCommonParser._
+		import attributeGroupsLinkParser._
+		import attributeGroupsScoreParser._
+		import complexCommonParser._
+		import complexDirectionParser._
+		import complexIdentityParser._
+		import complexLayoutParser._
+		import complexLinkParser._
+		import groupCommonParser._
+		import groupLayoutParser._
+		import xmlParser._
+		import primativeCommonParser._
+		import primativeScoreParser._
 
 		def xmlToCredit(name: String): XmlParser[Credit] = {
 			def toLinksBookmarksCreditWords = {
@@ -2049,10 +2106,10 @@ trait ComplexParser extends AttributeGroupsParser {
 		def xmlToPartList(name: String): XmlParser[PartList] = {
 			branchNode(name) {
 				for {
-					partGroup <- xmlToPartGroup.many
-					scorePart <- xmlToScorePart
-					choice <- xmlToPartGroup.map(PartGroupChoice)
-						.orElse(xmlToScorePart.map(ScorePartChoice))
+					partGroup <- groupScoreParser.xmlToPartGroup.many
+					scorePart <- groupScoreParser.xmlToScorePart
+					choice <- groupScoreParser.xmlToPartGroup.map(PartGroupChoice)
+						.orElse(groupScoreParser.xmlToScorePart.map(ScorePartChoice))
 						.many
 				} yield PartList(partGroup, scorePart, choice)
 			}

@@ -1,10 +1,25 @@
-package nl.rvanheest.sheetmusicreader.parser
+package nl.rvanheest.sheetmusicreader.musicxml.parser
 
-trait AttributeGroupsParser extends XmlParser with PrimativesParser {
+import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsCommon.{XPosition, YPosition, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsDirection.{ImageAttributes, PrintAttributes}
+import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsLink.{ElementPosition, LinkAttributes}
+import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsScore.{GroupNameText, MeasureAttributes, PartAttributes, PartNameText}
 
-	trait AttributeGroupsCommonParser extends PrimativeCommonParser {
+import scala.language.postfixOps
+import scala.xml.{NamespaceBinding, TopScope}
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsCommon._
+trait AttributeGroupsParser {
+	this: PrimativesParser with XmlParser =>
+
+	protected val attributeGroupsCommonParser = new AttributeGroupsCommonParser
+	protected val attributeGroupsDirectionParser = new AttributeGroupsDirectionParser
+	protected val attributeGroupsLinkParser = new AttributeGroupsLinkParser
+	protected val attributeGroupsScoreParser = new AttributeGroupsScoreParser
+
+	class AttributeGroupsCommonParser {
+
+		import xmlParser._
+		import primativeCommonParser._
 
 		def xmlToBendSound = {
 			for {
@@ -211,9 +226,11 @@ trait AttributeGroupsParser extends XmlParser with PrimativesParser {
 		}
 	}
 
-	trait AttributeGroupsDirectionParser extends AttributeGroupsCommonParser {
+	class AttributeGroupsDirectionParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsDirection._
+		import attributeGroupsCommonParser._
+		import xmlParser._
+		import primativeCommonParser._
 
 		def xmlToImageAttributes = {
 			for {
@@ -236,12 +253,9 @@ trait AttributeGroupsParser extends XmlParser with PrimativesParser {
 		}
 	}
 
-	trait AttributeGroupsLinkParser {
+	class AttributeGroupsLinkParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsLink._
-
-		import scala.language.postfixOps
-		import scala.xml.{NamespaceBinding, TopScope}
+		import xmlParser._
 
 		def xmlToElementPosition = {
 			for {
@@ -265,9 +279,11 @@ trait AttributeGroupsParser extends XmlParser with PrimativesParser {
 		}
 	}
 
-	trait AttributeGroupsScoreParser extends AttributeGroupsCommonParser {
+	class AttributeGroupsScoreParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsScore._
+		import attributeGroupsCommonParser._
+		import xmlParser._
+		import primativeCommonParser._
 
 		def xmlToGroupNameText = {
 			for {

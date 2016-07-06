@@ -5,7 +5,7 @@ import java.net.URI
 import javax.xml.parsers.SAXParserFactory
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Root.ScorePartwise
-import nl.rvanheest.sheetmusicreader.parser.MusicXmlParser
+import nl.rvanheest.sheetmusicreader.musicxml.parser.MusicXmlParser
 import org.junit.Assert.assertEquals
 import org.junit.{BeforeClass, Test}
 
@@ -264,7 +264,7 @@ object MusicXMLParserIntegrationTest {
 
 		val parser = XML.withSAXParser(parserFactory.newSAXParser())
 		val xml = Utility.trim(parser.loadFile(file))
-		val p = new MusicXmlParser {}
+		val p = MusicXmlParser.parser
 		score = p.partwise.run(xml)
 	}
 }

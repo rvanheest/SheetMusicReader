@@ -1,10 +1,29 @@
-package nl.rvanheest.sheetmusicreader.parser
+package nl.rvanheest.sheetmusicreader.musicxml.parser
 
-trait GroupParser extends ComplexParser {
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupAttributes.{NonTraditionalKey, Slash, TimeSignature, TraditionalKey}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupCommon.{Staff, Tuning, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupDirection._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupLayout.{AllMargins, Layout, LeftRightMargins}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupNote._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupScore.{ScoreHeader, _}
 
-	trait GroupAttributesParser extends ComplexAttributesParser {
+trait GroupParser {
+	this: ComplexParser with PrimativesParser with XmlParser with ParserCombinators =>
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupAttributes._
+	protected val groupAttributesParser = new GroupAttributesParser
+	protected val groupCommonParser = new GroupCommonParser
+	protected val groupDirectionParser = new GroupDirectionParser
+	protected val groupLayoutParser = new GroupLayoutParser
+	protected val groupNoteParser = new GroupNoteParser
+	protected val groupScoreParser = new GroupScoreParser
+
+	class GroupAttributesParser {
+
+		import complexAttributesParser._
+		import complexCommonParser._
+		import xmlParser._
+		import primativeAttributesParser._
+		import primativeNoteParser._
 
 		def xmlToNonTraditionalKey: XmlParser[NonTraditionalKey] = {
 			for {
@@ -37,9 +56,11 @@ trait GroupParser extends ComplexParser {
 		}
 	}
 
-	trait GroupCommonParser extends ComplexCommonParser {
+	class GroupCommonParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupCommon._
+		import complexCommonParser._
+		import xmlParser._
+		import primativeNoteParser._
 
 		def xmlToEditorial: XmlParser[Editorial] = {
 			for {
@@ -69,7 +90,7 @@ trait GroupParser extends ComplexParser {
 		}
 
 		def xmlToLevel: XmlParser[Level] = {
-			xmlToLevel("level")
+			complexCommonParser.xmlToLevel("level")
 		}
 
 		def xmlToStaff: XmlParser[Staff] = {
@@ -89,9 +110,13 @@ trait GroupParser extends ComplexParser {
 		}
 	}
 
-	trait GroupDirectionParser extends ComplexDirectionParser {
+	class GroupDirectionParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupDirection._
+		import complexCommonParser._
+		import complexDirectionParser._
+		import complexNoteParser._
+		import xmlParser._
+		import primativeNoteParser._
 
 		def xmlToBeatUnit: XmlParser[BeatUnit] = {
 			for {
@@ -112,9 +137,11 @@ trait GroupParser extends ComplexParser {
 		}
 	}
 
-	trait GroupLayoutParser extends ComplexLayoutParser {
+	class GroupLayoutParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupLayout._
+		import complexLayoutParser._
+		import xmlParser._
+		import primativeCommonParser._
 
 		def xmlToAllMargins: XmlParser[AllMargins] = {
 			for {
@@ -140,9 +167,13 @@ trait GroupParser extends ComplexParser {
 		}
 	}
 
-	trait GroupNoteParser extends ComplexNoteParser {
+	class GroupNoteParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupNote._
+		import complexCommonParser._
+		import complexNoteParser._
+		import xmlParser._
+		import primativeCommonParser._
+		import primativeNoteParser._
 
 		def xmlToDuration: XmlParser[Duration] = positiveDivisions("duration")(node)
 
@@ -163,11 +194,16 @@ trait GroupParser extends ComplexParser {
 		}
 	}
 
-	trait GroupScoreParser extends GroupAttributesParser with
-																 ComplexBarlineParser with
-																 ComplexScoreParser {
+	class GroupScoreParser {
 
-		import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupScore._
+		import complexAttributesParser._
+		import complexBarlineParser._
+		import complexDirectionParser._
+		import complexIdentityParser._
+		import complexLinkParser._
+		import complexNoteParser._
+		import complexScoreParser._
+		import xmlParser._
 
 		def xmlToMusicData: XmlParser[MusicData] = {
 			xmlToNote("note").map(NoteChoice)
@@ -188,7 +224,7 @@ trait GroupParser extends ComplexParser {
 		}
 
 		def xmlToPartGroup: XmlParser[PartGroup] = {
-			xmlToPartGroup("part-group")
+			complexScoreParser.xmlToPartGroup("part-group")
 		}
 
 		def xmlToScoreHeader: XmlParser[ScoreHeader] = {
@@ -204,7 +240,7 @@ trait GroupParser extends ComplexParser {
 		}
 
 		def xmlToScorePart: XmlParser[ScorePart] = {
-			xmlToScorePart("score-part")
+			complexScoreParser.xmlToScorePart("score-part")
 		}
 	}
 }

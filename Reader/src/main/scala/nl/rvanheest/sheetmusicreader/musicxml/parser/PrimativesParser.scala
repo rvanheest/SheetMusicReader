@@ -1,4 +1,4 @@
-package nl.rvanheest.sheetmusicreader.parser
+package nl.rvanheest.sheetmusicreader.musicxml.parser
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeAttributes._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline._
@@ -8,11 +8,20 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeLayout._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeNote._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeScore._
 
-trait PrimativesParser extends XmlParser {
+trait PrimativesParser {
+	this: XmlParser =>
 
 	type PrimativeParser[T] = String => (String => T) => XmlParser[T]
 
-	trait PrimativeAttributesParser {
+	protected val primativeAttributesParser = new PrimativeAttributesParser
+	protected val primativeBarlineParser = new PrimativeBarlineParser
+	protected val primativeCommonParser = new PrimativeCommonParser
+	protected val primativeDirectionParser = new PrimativeDirectionParser
+	protected val primativeLayoutParser = new PrimativeLayoutParser
+	protected val primativeNoteParser = new PrimativeNoteParser
+	protected val primativeScoreParser = new PrimativeScoreParser
+
+	class PrimativeAttributesParser {
 		def cancelLocation(name: String)(parser: PrimativeParser[CancelLocation]) = {
 			parser(name) {
 				case "left" => CancelLocation_Left
@@ -106,7 +115,7 @@ trait PrimativesParser extends XmlParser {
 		}
 	}
 
-	trait PrimativeBarlineParser {
+	class PrimativeBarlineParser {
 		def backwardForward(name: String)(parser: PrimativeParser[BackwardForward]) = {
 			parser(name) {
 				case "backward" => BF_Backward
@@ -166,7 +175,7 @@ trait PrimativesParser extends XmlParser {
 		}
 	}
 
-	trait PrimativeCommonParser {
+	class PrimativeCommonParser {
 		def aboveBelow(name: String)(parser: PrimativeParser[AboveBelow]) = {
 			parser(name) {
 				case "above" => AB_Above
@@ -523,7 +532,7 @@ trait PrimativesParser extends XmlParser {
 		}
 	}
 
-	trait PrimativeDirectionParser {
+	class PrimativeDirectionParser {
 		def accordionMiddle(name: String)(parser: PrimativeParser[AccordionMiddle]) = {
 			parser(name)(s => AccordionMiddle(s.toInt))
 		}
@@ -841,7 +850,7 @@ trait PrimativesParser extends XmlParser {
 		}
 	}
 
-	trait PrimativeLayoutParser {
+	class PrimativeLayoutParser {
 		def distanceType(name: String)(parser: PrimativeParser[DistanceType]) = {
 			parser(name)(identity)
 		}
@@ -873,7 +882,7 @@ trait PrimativesParser extends XmlParser {
 		}
 	}
 
-	trait PrimativeNoteParser {
+	class PrimativeNoteParser {
 		def accidentalValue(name: String)(parser: PrimativeParser[AccidentalValue]) = {
 			parser(name) {
 				case "sharp" => AccidentalValue_Sharp
@@ -1126,7 +1135,7 @@ trait PrimativesParser extends XmlParser {
 		}
 	}
 
-	trait PrimativeScoreParser {
+	class PrimativeScoreParser {
 		def groupBarlineValue(name: String)(parser: PrimativeParser[GroupBarlineValue]) = {
 			parser(name) {
 				case "yes" => GroupBarlineValue_Yes
