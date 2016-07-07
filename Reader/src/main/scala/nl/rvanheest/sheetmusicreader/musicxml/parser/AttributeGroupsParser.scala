@@ -8,8 +8,8 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGro
 import scala.language.postfixOps
 import scala.xml.{NamespaceBinding, TopScope}
 
-trait AttributeGroupsParser {
-	this: PrimativesParser with XmlParser =>
+trait AttributeGroupsParser[M[+_]] {
+	this: PrimativesParser[M] with XmlParser[M] =>
 
 	protected val attributeGroupsCommonParser = new AttributeGroupsCommonParser
 	protected val attributeGroupsDirectionParser = new AttributeGroupsDirectionParser
@@ -21,7 +21,7 @@ trait AttributeGroupsParser {
 		import xmlParser._
 		import primativeCommonParser._
 
-		def xmlToBendSound = {
+		def xmlToBendSound: XmlParser[BendSound] = {
 			for {
 				accelerate <- yesNo("accelerate")(attribute).maybe
 				beats <- trillBeats("beats")(attribute).maybe
@@ -30,7 +30,7 @@ trait AttributeGroupsParser {
 			} yield BendSound(accelerate, beats, firstBeat, lastBeat)
 		}
 
-		def xmlToBezier = {
+		def xmlToBezier: XmlParser[Bezier] = {
 			for {
 				offset <- divisions("bezier-offset")(attribute).maybe
 				offset2 <- divisions("bezier-offset2")(attribute).maybe
@@ -41,30 +41,30 @@ trait AttributeGroupsParser {
 			} yield Bezier(offset, offset2, x, y, x2, y2)
 		}
 
-		def xmlToColor = {
+		def xmlToColor: XmlParser[Color] = {
 			color("color")(attribute).maybe.map(Color)
 		}
 
-		def xmlToDashedFormatting = {
+		def xmlToDashedFormatting: XmlParser[DashedFormatting] = {
 			for {
 				dash <- tenths("dash-length")(attribute).maybe
 				space <- tenths("space-length")(attribute).maybe
 			} yield DashedFormatting(dash, space)
 		}
 
-		def xmlToDirective = {
+		def xmlToDirective: XmlParser[Directive] = {
 			yesNo("directive")(attribute).maybe.map(Directive)
 		}
 
-		def xmlToDocumentAttributes = {
+		def xmlToDocumentAttributes: XmlParser[DocumentAttributes] = {
 			(attributeId("version") <|> Parser.from("1.0")).map(DocumentAttributes)
 		}
 
-		def xmlToEnclosure = {
+		def xmlToEnclosure: XmlParser[Enclosure] = {
 			enclosureShape("enclosure")(attribute).maybe.map(Enclosure)
 		}
 
-		def xmlToFont = {
+		def xmlToFont: XmlParser[Font] = {
 			for {
 				family <- commaSeparatedText("font-family")(attribute).maybe
 				style <- fontStyle("font-style")(attribute).maybe
@@ -73,19 +73,19 @@ trait AttributeGroupsParser {
 			} yield Font(family, style, size, weight)
 		}
 
-		def xmlToHAlign = {
+		def xmlToHAlign: XmlParser[HAlign] = {
 			leftCenterRight("halign")(attribute).maybe.map(HAlign)
 		}
 
-		def xmlToJustify = {
+		def xmlToJustify: XmlParser[Justify] = {
 			leftCenterRight("justify")(attribute).maybe.map(Justify)
 		}
 
-		def xmlToLetterSpacing = {
+		def xmlToLetterSpacing: XmlParser[LetterSpacing] = {
 			numberOrNormal("letter-spacing")(attribute).maybe.map(LetterSpacing)
 		}
 
-		def xmlToLevelDisplay = {
+		def xmlToLevelDisplay: XmlParser[LevelDisplay] = {
 			for {
 				parentheses <- yesNo("parentheses")(attribute).maybe
 				bracket <- yesNo("bracket")(attribute).maybe
@@ -93,27 +93,27 @@ trait AttributeGroupsParser {
 			} yield LevelDisplay(parentheses, bracket, size)
 		}
 
-		def xmlToLineHeight = {
+		def xmlToLineHeight: XmlParser[LineHeight] = {
 			numberOrNormal("line-height")(attribute).maybe.map(LineHeight)
 		}
 
-		def xmlToLineShape = {
+		def xmlToLineShape: XmlParser[LineShape] = {
 			lineShape("line-shape")(attribute).maybe.map(LineShape)
 		}
 
-		def xmlToLineType = {
+		def xmlToLineType: XmlParser[LineType] = {
 			lineType("line-type")(attribute).maybe.map(LineType)
 		}
 
-		def xmlToOrientation = {
+		def xmlToOrientation: XmlParser[Orientation] = {
 			overUnder("orientation")(attribute).maybe.map(Orientation)
 		}
 
-		def xmlToPlacement = {
+		def xmlToPlacement: XmlParser[Placement] = {
 			aboveBelow("placement")(attribute).maybe.map(Placement)
 		}
 
-		def xmlToPosition = {
+		def xmlToPosition: XmlParser[Position] = {
 			for {
 				defaultX <- tenths("default-x")(attribute).maybe
 				defaultY <- tenths("default-y")(attribute).maybe
@@ -122,15 +122,15 @@ trait AttributeGroupsParser {
 			} yield Position(defaultX, defaultY, relativeX, relativeY)
 		}
 
-		def xmlToPrintObject = {
+		def xmlToPrintObject: XmlParser[PrintObject] = {
 			yesNo("print-object")(attribute).maybe.map(PrintObject)
 		}
 
-		def xmlToPrintSpacing = {
+		def xmlToPrintSpacing: XmlParser[PrintSpacing] = {
 			yesNo("print-spacing")(attribute).maybe.map(PrintSpacing)
 		}
 
-		def xmlToPrintStyle = {
+		def xmlToPrintStyle: XmlParser[PrintStyle] = {
 			for {
 				position <- xmlToPosition
 				font <- xmlToFont
@@ -138,7 +138,7 @@ trait AttributeGroupsParser {
 			} yield PrintStyle(position, font, color)
 		}
 
-		def xmlToPrintStyleAlign = {
+		def xmlToPrintStyleAlign: XmlParser[PrintStyleAlign] = {
 			for {
 				printStyle <- xmlToPrintStyle
 				halign <- xmlToHAlign
@@ -146,7 +146,7 @@ trait AttributeGroupsParser {
 			} yield PrintStyleAlign(printStyle, halign, valign)
 		}
 
-		def xmlToPrintout = {
+		def xmlToPrintout: XmlParser[Printout] = {
 			for {
 				printObject <- xmlToPrintObject
 				dot <- yesNo("print-dot")(attribute).maybe
@@ -155,7 +155,7 @@ trait AttributeGroupsParser {
 			} yield Printout(printObject, dot, spacing, lyric)
 		}
 
-		def xmlToTextDecoration = {
+		def xmlToTextDecoration: XmlParser[TextDecoration] = {
 			for {
 				underline <- numberOfLines("underline")(attribute).maybe
 				overline <- numberOfLines("overline")(attribute).maybe
@@ -163,11 +163,11 @@ trait AttributeGroupsParser {
 			} yield TextDecoration(underline, overline, lineThrough)
 		}
 
-		def xmlToTextDirection = {
+		def xmlToTextDirection: XmlParser[TextDirection] = {
 			textDirection("dir")(attribute).maybe.map(TextDirection)
 		}
 
-		def xmlToTextFormatting = {
+		def xmlToTextFormatting: XmlParser[TextFormatting] = {
 			for {
 				justify <- xmlToJustify
 				printStyleAlign <- xmlToPrintStyleAlign
@@ -183,11 +183,11 @@ trait AttributeGroupsParser {
 				lineHeight, lang, space, textDirection, enclosure)
 		}
 
-		def xmlToTextRotation = {
+		def xmlToTextRotation: XmlParser[TextRotation] = {
 			rotationDegrees("rotation")(attribute).maybe.map(TextRotation)
 		}
 
-		def xmlToTrillSound = {
+		def xmlToTrillSound: XmlParser[TrillSound] = {
 			for {
 				startNote <- startNote("start-note")(attribute).maybe
 				trillStep <- trillStep("trill-step")(attribute).maybe
@@ -199,15 +199,15 @@ trait AttributeGroupsParser {
 			} yield TrillSound(startNote, trillStep, twoNoteTurn, accelerate, beats, secondBeat, lastBeat)
 		}
 
-		def xmlToVAlign = {
+		def xmlToVAlign: XmlParser[VAlign] = {
 			vAlign("valign")(attribute).maybe.map(VAlign)
 		}
 
-		def xmlToVAlignImage = {
+		def xmlToVAlignImage: XmlParser[VAlignImage] = {
 			vAlignImage("valign")(attribute).maybe.map(VAlignImage)
 		}
 
-		def xmlToXPosition = {
+		def xmlToXPosition: XmlParser[XPosition] = {
 			for {
 				defaultX <- tenths("default-x")(attribute).maybe
 				defaultY <- tenths("default-y")(attribute).maybe
@@ -216,7 +216,7 @@ trait AttributeGroupsParser {
 			} yield XPosition(defaultX, defaultY, relativeX, relativeY)
 		}
 
-		def xmlToYPosition = {
+		def xmlToYPosition: XmlParser[YPosition] = {
 			for {
 				defaultX <- tenths("default-x")(attribute).maybe
 				defaultY <- tenths("default-y")(attribute).maybe
@@ -232,7 +232,7 @@ trait AttributeGroupsParser {
 		import xmlParser._
 		import primativeCommonParser._
 
-		def xmlToImageAttributes = {
+		def xmlToImageAttributes: XmlParser[ImageAttributes] = {
 			for {
 				source <- attributeId("source")
 				imgType <- attributeId("type")
@@ -242,7 +242,7 @@ trait AttributeGroupsParser {
 			} yield ImageAttributes(source, imgType, position, halign, valignImage)
 		}
 
-		def xmlToPrintAttributes = {
+		def xmlToPrintAttributes: XmlParser[PrintAttributes] = {
 			for {
 				staffSpacing <- tenths("staff-spacing")(attribute).maybe
 				newSystem <- yesNo("new-system")(attribute).maybe
@@ -257,14 +257,14 @@ trait AttributeGroupsParser {
 
 		import xmlParser._
 
-		def xmlToElementPosition = {
+		def xmlToElementPosition: XmlParser[ElementPosition] = {
 			for {
 				element <- attributeId("element").maybe
 				position <- attribute("position")(_.toInt).maybe
 			} yield ElementPosition(element, position)
 		}
 
-		def xmlToLinkAttributes = {
+		def xmlToLinkAttributes: XmlParser[LinkAttributes] = {
 			implicit val xlink = "http://www.w3.org/1999/xlink"
 			implicit val nb = NamespaceBinding("xlink", xlink, TopScope)
 
@@ -285,14 +285,14 @@ trait AttributeGroupsParser {
 		import xmlParser._
 		import primativeCommonParser._
 
-		def xmlToGroupNameText = {
+		def xmlToGroupNameText: XmlParser[GroupNameText] = {
 			for {
 				printStyle <- xmlToPrintStyle
 				justify <- xmlToJustify
 			} yield GroupNameText(printStyle, justify)
 		}
 
-		def xmlToMeasureAttributes = {
+		def xmlToMeasureAttributes: XmlParser[MeasureAttributes] = {
 			for {
 				number <- attributeId("number")
 				implicitAttr <- yesNo("implicit")(attribute).maybe
@@ -305,7 +305,7 @@ trait AttributeGroupsParser {
 			attributeId("id")
 		}
 
-		def xmlToPartNameText = {
+		def xmlToPartNameText: XmlParser[PartNameText] = {
 			for {
 				printStyle <- xmlToPrintStyle
 				printObject <- xmlToPrintObject

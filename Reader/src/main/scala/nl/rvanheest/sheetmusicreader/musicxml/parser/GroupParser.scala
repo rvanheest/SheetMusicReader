@@ -7,8 +7,8 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupLayout.{AllMargin
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupNote._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupScore.{ScoreHeader, _}
 
-trait GroupParser {
-	this: ComplexParser with PrimativesParser with XmlParser with ParserCombinators =>
+trait GroupParser[M[+_]] {
+	this: ComplexParser[M] with AttributeGroupsParser[M] with PrimativesParser[M] with XmlParser[M] =>
 
 	protected val groupAttributesParser = new GroupAttributesParser
 	protected val groupCommonParser = new GroupCommonParser

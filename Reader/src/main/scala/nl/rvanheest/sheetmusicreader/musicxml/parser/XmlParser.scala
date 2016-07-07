@@ -1,16 +1,24 @@
 package nl.rvanheest.sheetmusicreader.musicxml.parser
 
+import nl.rvanheest.sheetmusicreader.monadics.{MonadPlus, StateT}
+
 import scala.xml.{NamespaceBinding, Node}
 
-trait XmlParser extends ParserCombinators {
+trait XmlParser[M[+_]] extends Parser {
 
-	type XmlParser[A] = Parser[Seq[Node], A]
+	type XmlParser[A] = StateT[Seq[Node], A, M]
 
-	protected val xmlParser = XML
+	protected implicit val mp: MonadPlus[M]
 
-	object XML {
+	protected val xmlParser = XmlParser
+
+	object XmlParser {
 		private def nodeItem: XmlParser[Node] = {
-			Parser(ns => ns.headOption.map((_, ns.tail)))
+			StateT(ns => ns
+				.headOption
+				.map((_, ns.tail))
+				.map(x => mp.create(x))
+				.getOrElse(mp.empty))
 		}
 
 		def nodeWithName(name: String): XmlParser[Node] = {
@@ -26,22 +34,28 @@ trait XmlParser extends ParserCombinators {
 		}
 
 		def branchNode[A](name: String)(subParser: XmlParser[A]): XmlParser[A] = {
-			Parser(input => {
-				for {
-					(childNodes, rest) <- nodeWithName(name).map(_.child).parse(input)
-					(result, rest2) <- subParser.parse(childNodes)
-				} yield (result, rest2 ++ rest)
+			StateT(input => {
+				mp.flatMap(nodeWithName(name).map(_.child).run(input)) {
+					case (childNodes, rest) =>
+						mp.map(subParser.run(childNodes)) {
+							case (result, rest2) => (result, rest2 ++ rest)
+						}
+				}
 			})
 		}
 
 		private def attributeItem: XmlParser[Node] = {
-			Parser(ns => ns.headOption.map((_, ns)))
+			StateT(ns => ns
+				.headOption
+				.map((_, ns))
+				.map(x => mp.create(x))
+				.getOrElse(mp.empty))
 		}
 
 		def attribute[T](attr: String)(constructor: String => T): XmlParser[T] = {
 			attributeItem.map(_ \@ attr).satisfy(_.nonEmpty).flatMap(x => {
-				try { Parser.from(constructor(x)) }
-				catch { case e: Throwable => Parser.failure }
+				try { StateT.from(constructor(x)) }
+				catch { case e: Throwable => StateT.failure }
 			})
 		}
 
@@ -58,13 +72,13 @@ trait XmlParser extends ParserCombinators {
 		}
 
 		def debugAndFail(pos: String = ""): XmlParser[Nothing] = {
-			Parser(xs => sys.error(s"you hit a debug statement at $pos: $xs"))
+			StateT(xs => sys.error(s"you hit a debug statement at $pos: $xs"))
 		}
 
 		def debugAndContinue(pos: String = ""): XmlParser[Unit] = {
-			Parser(xs => {
+			StateT(xs => {
 				println(s"you hit a debug statement at $pos: $xs")
-				Some(((), xs))
+				mp create ((), xs)
 			})
 		}
 	}

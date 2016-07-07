@@ -12,8 +12,8 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexScore.{Work, 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline.RLM_Right
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
 
-trait ComplexParser {
-	this: GroupParser with AttributeGroupsParser with PrimativesParser with XmlParser with ParserCombinators =>
+trait ComplexParser[M[+_]] {
+	this: GroupParser[M] with AttributeGroupsParser[M] with PrimativesParser[M] with XmlParser[M] =>
 
 	protected val complexAttributesParser = new ComplexAttributesParser
 	protected val complexBarlineParser = new ComplexBarlineParser

@@ -8,8 +8,8 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeLayout._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeNote._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeScore._
 
-trait PrimativesParser {
-	this: XmlParser =>
+trait PrimativesParser[M[+_]] {
+	this: XmlParser[M] =>
 
 	type PrimativeParser[T] = String => (String => T) => XmlParser[T]
 

@@ -264,7 +264,6 @@ object MusicXMLParserIntegrationTest {
 
 		val parser = XML.withSAXParser(parserFactory.newSAXParser())
 		val xml = Utility.trim(parser.loadFile(file))
-		val p = MusicXmlParser.parser
-		score = p.partwise.run(xml)
+		score = MusicXmlParser.parser[Option].partwise.eval(xml).get
 	}
 }
