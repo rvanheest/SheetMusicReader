@@ -16,21 +16,26 @@ trait XmlParser[M[+_]] extends Parser {
 		private def nodeItem: XmlParser[Node] = {
 			StateT(ns => ns
 				.headOption
-				.map((_, ns.tail))
-				.map(x => mp.create(x))
+				.map(head => mp.create(head, ns.tail))
 				.getOrElse(mp.empty))
+		}
+
+		private def withException[T](s: String)(constructor: String => T): XmlParser[T] = {
+			try { StateT.from(constructor(s)) }
+			catch { case e: Throwable => StateT.failure(e) }
 		}
 
 		def nodeWithName(name: String): XmlParser[Node] = {
 			nodeItem.satisfy(_.label == name)
 		}
 
-		def node[T](name: String)(constructor: String => T): XmlParser[T] = {
-			xmlToString(name).map(constructor)
-		}
-
 		def xmlToString(name: String): XmlParser[String] = {
 			nodeWithName(name).map(_.text)
+		}
+
+		def node[T](name: String)(constructor: String => T): XmlParser[T] = {
+			xmlToString(name)
+				.flatMap(withException(_)(constructor))
 		}
 
 		def branchNode[A](name: String)(subParser: XmlParser[A]): XmlParser[A] = {
@@ -47,16 +52,15 @@ trait XmlParser[M[+_]] extends Parser {
 		private def attributeItem: XmlParser[Node] = {
 			StateT(ns => ns
 				.headOption
-				.map((_, ns))
-				.map(x => mp.create(x))
+				.map(head => mp.create(head, ns))
 				.getOrElse(mp.empty))
 		}
 
 		def attribute[T](attr: String)(constructor: String => T): XmlParser[T] = {
-			attributeItem.map(_ \@ attr).satisfy(_.nonEmpty).flatMap(x => {
-				try { StateT.from(constructor(x)) }
-				catch { case e: Throwable => StateT.failure }
-			})
+			attributeItem
+				.map(_ \@ attr)
+				.satisfy(_.nonEmpty)
+			  .flatMap(withException(_)(constructor))
 		}
 
 		def attributeId(attr: String): XmlParser[String] = {
