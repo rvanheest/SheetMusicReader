@@ -6,6 +6,7 @@ import javax.xml.parsers.SAXParserFactory
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Root.ScorePartwise
 import nl.rvanheest.sheetmusicreader.musicxml.parser.MusicXmlParser
+import nl.rvanheest.sheetmusicreader.test.parser.integration._
 import org.junit.Assert.assertEquals
 import org.junit.{BeforeClass, Test}
 

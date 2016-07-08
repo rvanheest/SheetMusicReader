@@ -1,13 +1,13 @@
-package nl.rvanheest.sheetmusicreader.test.parser
+package nl.rvanheest.sheetmusicreader.test.parser.integration
 
-import nl.rvanheest.sheetmusicreader.musicxml.{model => model}
-import model.AttributeGroups.AttributeGroupsCommon.{Color, _}
-import model.Complex.ComplexCommon.EmptyPrintObjectStyleAlign
-import model.Complex.ComplexLayout._
-import model.Group.GroupLayout.{AllMargins, Layout, LeftRightMargins}
-import model.Primatives.PrimativeAttributes.StaffNumber
-import model.Primatives.PrimativeCommon.{Color => PrimColor, _}
-import model.Primatives.PrimativeLayout.{MarginType_Odd, NoteSizeType_Cue, NoteSizeType_Grace}
+import nl.rvanheest.sheetmusicreader.musicxml.model
+import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsCommon.{Color, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon.EmptyPrintObjectStyleAlign
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexLayout._
+import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupLayout.{AllMargins, Layout, LeftRightMargins}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeAttributes.StaffNumber
+import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon.{Color => PrimColor, _}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeLayout.{MarginType_Odd, NoteSizeType_Cue, NoteSizeType_Grace}
 
 object LayoutObjects {
 	val appearance = {

@@ -1,4 +1,4 @@
-package nl.rvanheest.sheetmusicreader.test.parser
+package nl.rvanheest.sheetmusicreader.test.parser.integration
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsCommon.DocumentAttributes
 import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsScore.MeasureAttributes

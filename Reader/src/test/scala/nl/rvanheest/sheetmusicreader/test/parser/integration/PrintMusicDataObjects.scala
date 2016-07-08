@@ -1,4 +1,4 @@
-package nl.rvanheest.sheetmusicreader.test.parser
+package nl.rvanheest.sheetmusicreader.test.parser.integration
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon.{AccidentalText, AccidentalTextNameDisplayChoice, NameDisplay}
 import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexDirection.{MeasureNumbering, Print}

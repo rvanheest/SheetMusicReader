@@ -1,4 +1,4 @@
-package nl.rvanheest.sheetmusicreader.test.parser
+package nl.rvanheest.sheetmusicreader.test.parser.integration
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexDirection.{Feature, Grouping}
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupScore.GroupingChoice
