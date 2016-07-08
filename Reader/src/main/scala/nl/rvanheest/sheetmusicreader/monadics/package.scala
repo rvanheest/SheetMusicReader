@@ -7,6 +7,8 @@ package object monadics {
 	implicit object OptionIsMonadPlus extends MonadPlus[Option] {
 		def empty[A]: Option[A] = None
 
+		def fail[A](e: Throwable): Option[A] = None
+
 		def create[A](a: A): Option[A] = Some(a)
 
 		def orElse[A, B >: A](alt1: Option[A], alt2: => Option[B]): Option[B] = {
@@ -24,6 +26,8 @@ package object monadics {
 
 	implicit object TryIsMonadPlus extends MonadPlus[Try] {
 		def empty[A]: Try[A] = Failure(new NoSuchElementException("empty"))
+
+		def fail[A](e: Throwable): Try[A] = Failure(e)
 
 		def create[A](a: A): Try[A] = Success(a)
 

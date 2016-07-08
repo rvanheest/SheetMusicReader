@@ -95,4 +95,8 @@ object StateT {
 	def failure[S, A, M[+_]](implicit m: MonadPlus[M]): StateT[S, A, M] = {
 		StateT(_ => m.empty)
 	}
+
+	def failure[S, A, M[+_]](e: Throwable)(implicit m: MonadPlus[M]): StateT[S, A, M] = {
+		StateT(_ => m.fail(e))
+	}
 }

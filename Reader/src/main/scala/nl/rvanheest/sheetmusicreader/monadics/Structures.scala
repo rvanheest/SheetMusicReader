@@ -50,6 +50,10 @@ trait Monad[M[_]] extends Applicative[M] {
 	def flatten[A, B](mA: M[A])(implicit ev: A <:< M[B]): M[B] = {
 		flatMap(mA)(ev)
 	}
+
+	def fail[A](s: String): M[A] = fail(new Exception(s))
+
+	def fail[A](e: Throwable): M[A]
 }
 
 trait Alternative[Alt[_]] extends Applicative[Alt] {
