@@ -12,9 +12,11 @@ class StateT[S, +A, M[+_]](state: S => M[(A, S)])(implicit m: MonadPlus[M]) {
 
 	def execute(s: S): M[S] = m.map(state(s))(_._2)
 
-	def orElse[B >: A](other: => StateT[S, B, M]): StateT[S, B, M] = this <|> other
-	def <|>[B >: A](other: => StateT[S, B, M]): StateT[S, B, M] = {
+	def orElse[B >: A](other: => StateT[S, B, M]): StateT[S, B, M] = {
 		StateT(st => m.orElse(run(st), other.run(st)))
+	}
+	def <|>[B >: A](other: => StateT[S, B, M]): StateT[S, B, M] = {
+		this.orElse(other)
 	}
 
 	def map[B](f: A => B): StateT[S, B, M] = {
@@ -25,9 +27,11 @@ class StateT[S, +A, M[+_]](state: S => M[(A, S)])(implicit m: MonadPlus[M]) {
 		map(a => { f(a); a })
 	}
 
-	def flatMap[B](f: A => StateT[S, B, M]): StateT[S, B, M] = this >>= f
-	def >>=[B](f: A => StateT[S, B, M]): StateT[S, B, M] = {
+	def flatMap[B](f: A => StateT[S, B, M]): StateT[S, B, M] = {
 		StateT(st => m.flatMap(state(st)) { case (a, s) => f(a).run(s) })
+	}
+	def >>=[B](f: A => StateT[S, B, M]): StateT[S, B, M] = {
+		this.flatMap(f)
 	}
 
 	def >>[B](other: => StateT[S, B, M]): StateT[S, B, M] = {
@@ -43,9 +47,13 @@ class StateT[S, +A, M[+_]](state: S => M[(A, S)])(implicit m: MonadPlus[M]) {
 		this >>= (x => if (predicate(x)) from(x) else failure)
 	}
 
-	def maybe: StateT[S, Option[A], M] = map(Option(_)) <|> from(Option.empty)
+	def maybe: StateT[S, Option[A], M] = {
+		map(Option(_)) <|> from(Option.empty)
+	}
 
-	def many: StateT[S, List[A], M] = atLeastOnce <|> from(Nil)
+	def many: StateT[S, List[A], M] = {
+		atLeastOnce <|> from(Nil)
+	}
 
 	def atLeastOnce: StateT[S, List[A], M] = {
 		for {
