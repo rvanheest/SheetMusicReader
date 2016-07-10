@@ -1022,9 +1022,9 @@ trait ComplexParser[M[+_]] {
 				pizzicato <- yesNo("pizzicato")(attribute).maybe
 				pan <- rotationDegrees("pan")(attribute).maybe
 				elevation <- rotationDegrees("elevation")(attribute).maybe
-				damperPedal <- yesNoNumber("damper-pedal")(attribute, attribute).maybe
-				softPedal <- yesNoNumber("soft-pedal")(attribute, attribute).maybe
-				sostenutoPedal <- yesNoNumber("sostenuto-pedal")(attribute, attribute).maybe
+				damperPedal <- yesNoNumber("damper-pedal")(attribute)(attribute).maybe
+				softPedal <- yesNoNumber("soft-pedal")(attribute)(attribute).maybe
+				sostenutoPedal <- yesNoNumber("sostenuto-pedal")(attribute)(attribute).maybe
 				sound <- branchNode(name) {
 					for {
 						midiProps <- xmlToMidiProps.takeUntil(_.isEmpty)

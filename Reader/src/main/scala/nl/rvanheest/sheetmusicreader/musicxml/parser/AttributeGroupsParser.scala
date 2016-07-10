@@ -68,7 +68,7 @@ trait AttributeGroupsParser[M[+_]] {
 			for {
 				family <- commaSeparatedText("font-family")(attribute).maybe
 				style <- fontStyle("font-style")(attribute).maybe
-				size <- fontSize("font-size")(attribute, attribute).maybe
+				size <- fontSize("font-size")(attribute)(attribute).maybe
 				weight <- fontWeight("font-weight")(attribute).maybe
 			} yield Font(family, style, size, weight)
 		}

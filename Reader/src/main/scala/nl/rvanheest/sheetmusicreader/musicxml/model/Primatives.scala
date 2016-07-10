@@ -62,7 +62,7 @@ object Primatives {
 			* from top to bottom, with 1 being the top staff on a part.
 			*/
 		case class StaffNumber(num: Int) {
-			require(num > 0)
+			require(num > 0, s"the staff number must be larger than 0, but was $num")
 		}
 
 		/**
@@ -156,7 +156,8 @@ object Primatives {
 			* ending is present, but cannot determine the type of the ending.
 			*/
 		case class EndingNumber(ending: String) {
-			require(ending matches "([ ]*)|([1-9][0-9]*(, ?[1-9][0-9]*)*)")
+			require(ending matches "([ ]*)|([1-9][0-9]*(, ?[1-9][0-9]*)*)",
+				s"""ending number "$ending" does not match the expected pattern""")
 		}
 
 		/**
@@ -209,8 +210,8 @@ object Primatives {
 			* or beams used in different voices.
 			*/
 		case class BeamLevel(number: Int) {
-			require(number >= 1)
-			require(number <= 8)
+			require(number >= 1, s"the beam level must be larger than or equal to 1, but was $number")
+			require(number <= 8, s"the beam level must be smaller than or equal to 8, but was $number")
 		}
 
 		/**
@@ -223,7 +224,8 @@ object Primatives {
 			* As in SVG 1.1, colors are defined in terms of the sRGB color space (IEC 61966).
 			*/
 		case class Color(color: String) {
-			require(color matches "#[\\dA-F]{6}([\\dA-F][\\dA-F])?")
+			require(color matches "#[\\dA-F]{6}([\\dA-F][\\dA-F])?",
+				s"""color "$color" does not match the expected pattern""")
 		}
 
 		/**
@@ -231,7 +233,8 @@ object Primatives {
 			* as is used by the font-family attribute.
 			*/
 		case class CommaSeparatedText(text: String) {
-			require(text matches "[^,]+(, ?[^,]+)*")
+			require(text matches "[^,]+(, ?[^,]+)*",
+				s"""comma separated text "$text" does not match the expected pattern""")
 		}
 
 		/**
@@ -335,24 +338,30 @@ object Primatives {
 			* The midi-16 type is used to express MIDI 1.0 values that range from 1 to 16.
 			*/
 		case class Midi16(value: Int) {
-			require(value >= 1)
-			require(value <= 16)
+			require(value >= 1,
+				s"midi16 value must be larger than or equal to 1, but was $value")
+			require(value <= 16,
+				s"midi16 value must be smaller than or equal to 16, but was $value")
 		}
 
 		/**
 			* The midi-16 type is used to express MIDI 1.0 values that range from 1 to 128.
 			*/
 		case class Midi128(value: Int) {
-			require(value >= 1)
-			require(value <= 128)
+			require(value >= 1,
+				s"midi128 value must be larger than or equal to 1, but was $value")
+			require(value <= 128,
+				s"midi128 value must be smaller than or equal to 128, but was $value")
 		}
 
 		/**
 			* The midi-16 type is used to express MIDI 1.0 values that range from 1 to 16,384.
 			*/
 		case class Midi16384(value: Int) {
-			require(value >= 1)
-			require(value <= 16384)
+			require(value >= 1,
+				s"midi16384 value must be larger than or equal to 1, but was $value")
+			require(value <= 16384,
+				s"midi16384 value must be smaller than or equal to 16384, but was $value")
 		}
 
 		/**
@@ -381,7 +390,7 @@ object Primatives {
 			* The non-negative-decimal type specifies a non-negative decimal value.
 			*/
 		case class NonNegativeDecimal(num: Double) {
-			require(num >= 0)
+			require(num >= 0, s"a non negative decimal must be larger than or equal to 0, but was $num")
 		}
 
 		/**
@@ -393,16 +402,16 @@ object Primatives {
 			* When a number-level value is implied, the value is 1 by default.
 			*/
 		case class NumberLevel(level: Int) {
-			require(level >= 1)
-			require(level <= 6)
+			require(level >= 1, s"number level must be larger than or equal to 1, but was $level")
+			require(level <= 6, s"number level must be smaller than or equal to 6, but was $level")
 		}
 
 		/**
 			* The number-of-lines type is used to specify the number of lines in text decoration attributes.
 			*/
 		case class NumberOfLines(lines: Int) {
-			require(lines >= 0)
-			require(lines <= 3)
+			require(lines >= 0, s"number of lines must be larger than or equal to 0, but was $lines")
+			require(lines <= 3, s"number of lines must be smaller than or equal to 3, but was $lines")
 		}
 
 		/**
@@ -425,29 +434,31 @@ object Primatives {
 			* The percent type specifies a percentage from 0 to 100.
 			*/
 		case class Percent(percent: Double) {
-			require(percent >= 0)
-			require(percent <= 100)
+			require(percent >= 0,
+				s"percent value must be larger than or equal to 0, but was $percent")
+			require(percent <= 100,
+				s"percent value must be smaller than or equal to 100, but was $percent")
 		}
 
 		/**
 			* The positive-decimal type specifies a positive decimal value.
 			*/
 		case class PositiveDecimal(decimal: Double) {
-			require(decimal > 0)
+			require(decimal > 0, s""""positive decimals" (which was $decimal) should be larger than 0""")
 		}
 
 		/**
 			* The positive-divisions type restricts divisions values to positive numbers.
 			*/
 		case class PositiveDivisions(divs: Divisions) {
-			require(divs > 0)
+			require(divs > 0, s"divisions (which was $divs) should be larger than 0")
 		}
 
 		/**
 			* The positive-integer-or-empty values can be either a positive integer or an empty string.
 			*/
 		case class PositiveIntegerOrEmpty(posInt: Option[Int] = Option.empty) {
-			require(posInt.forall(_ > 0))
+			require(posInt.forall(_ > 0), s"this value must be larger than 0 or empty, but was $posInt")
 		}
 
 		/**
@@ -455,8 +466,10 @@ object Primatives {
 			* Values range from -180 to 180.
 			*/
 		case class RotationDegrees(degrees: Double) {
-			require(degrees >= -180)
-			require(degrees <= 180)
+			require(degrees >= -180,
+				s"the rotation degrees must be larger than or equal to -180, but was $degrees")
+			require(degrees <= 180,
+				s"the rotation degrees must be smaller than or equal to 180, but was $degrees")
 		}
 
 		/**
@@ -523,7 +536,7 @@ object Primatives {
 			* with 1 being the highest pitched string.
 			*/
 		case class StringNumber(num: Int) {
-			require(num > 0)
+			require(num > 0, s"string number must be larger than 0, but was $num")
 		}
 
 		/**
@@ -572,7 +585,8 @@ object Primatives {
 			* the element applies.
 			*/
 		case class TimeOnly(time: String) {
-			require(time matches "[1-9][0-9]*(, ?[1-9][0-9]*)*")
+			require(time matches "[1-9][0-9]*(, ?[1-9][0-9]*)*",
+				s"""time ($time) does not match the given pattern""")
 		}
 
 		/**
@@ -588,7 +602,7 @@ object Primatives {
 			* It is a decimal value with a minimum value of 2.
 			*/
 		case class TrillBeats(trill: Double) {
-			require(trill >= 2.0)
+			require(trill >= 2.0, s"trill beats must be larger than or equal to 2, but was $trill")
 		}
 
 		/**
@@ -664,7 +678,7 @@ object Primatives {
 			* This is a W3C XML Schema date type, but without the optional timezone data.
 			*/
 		case class Date(date: String) {
-			require(date matches "[^:Z]*")
+			require(date matches "[^:Z]*", s""""date "$date" doesn't correspond to the specified pattern""")
 		}
 	}
 

@@ -237,14 +237,14 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def fontSize(name: String)(cssParser: PrimativeParser[CssFontSize], parser: PrimativeParser[FS_Double]) = {
+		def fontSize(name: String)(cssParser: PrimativeParser[CssFontSize])(parser: PrimativeParser[FS_Double]) = {
 			cssFontSize(name)(cssParser).map(FS_CssFontSize) <|> parser(name)(s => FS_Double(s.toDouble))
 		}
 
 		def fontStyle(name: String)(parser: PrimativeParser[FontStyle]) = {
 			parser(name) {
 				case "normal" => FontStyle_Normal
-				case "itatic" => FontStyle_Italic
+				case "italic" => FontStyle_Italic
 				case other => sys.error(s"$other is not supported as an instance of FontStyle")
 			}
 		}
@@ -360,8 +360,8 @@ trait PrimativesParser[M[+_]] {
 			parser(name)(s => PositiveDecimal(s.toDouble))
 		}
 
-		def positiveDivisions(name: String)(parser: PrimativeParser[Divisions]) = {
-			divisions(name)(parser).map(PositiveDivisions)
+		def positiveDivisions(name: String)(parser: PrimativeParser[PositiveDivisions]) = {
+			parser(name)(s => PositiveDivisions(s.toDouble))
 		}
 
 		def positiveIntegerOrEmpty(name: String)(parser: PrimativeParser[PositiveIntegerOrEmpty]) = {
@@ -523,7 +523,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def yesNoNumber(name: String)(yesNoParser: PrimativeParser[YesNo], parser: PrimativeParser[YNN_Double]) = {
+		def yesNoNumber(name: String)(yesNoParser: PrimativeParser[YesNo])(parser: PrimativeParser[YNN_Double]) = {
 			yesNo(name)(yesNoParser).map(YNN_YesNo) <|> parser(name)(s => YNN_Double(s.toDouble))
 		}
 
