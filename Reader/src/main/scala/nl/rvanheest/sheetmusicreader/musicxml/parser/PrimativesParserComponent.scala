@@ -1,5 +1,6 @@
 package nl.rvanheest.sheetmusicreader.musicxml.parser
 
+import nl.rvanheest.sheetmusicreader.monadics.StateT
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeAttributes._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
@@ -8,21 +9,23 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeLayout._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeNote._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeScore._
 
-trait PrimativesParser[M[+_]] {
-	this: XmlParser[M] =>
+import scala.xml.Node
+
+trait PrimativesParserComponent[M[+_]] {
+	this: XmlParserComponent[M] =>
 
 	type PrimativeParser[T] = String => (String => T) => XmlParser[T]
 
-	protected val primativeAttributesParser = new PrimativeAttributesParser
-	protected val primativeBarlineParser = new PrimativeBarlineParser
-	protected val primativeCommonParser = new PrimativeCommonParser
-	protected val primativeDirectionParser = new PrimativeDirectionParser
-	protected val primativeLayoutParser = new PrimativeLayoutParser
-	protected val primativeNoteParser = new PrimativeNoteParser
-	protected val primativeScoreParser = new PrimativeScoreParser
+	protected val primativeAttributesParser: PrimativeAttributesParser
+	protected val primativeBarlineParser: PrimativeBarlineParser
+	protected val primativeCommonParser: PrimativeCommonParser
+	protected val primativeDirectionParser: PrimativeDirectionParser
+	protected val primativeLayoutParser: PrimativeLayoutParser
+	protected val primativeNoteParser: PrimativeNoteParser
+	protected val primativeScoreParser: PrimativeScoreParser
 
 	class PrimativeAttributesParser {
-		def cancelLocation(name: String)(parser: PrimativeParser[CancelLocation]) = {
+		def cancelLocation(name: String)(parser: PrimativeParser[CancelLocation]): XmlParser[CancelLocation] = {
 			parser(name) {
 				case "left" => CancelLocation_Left
 				case "right" => CancelLocation_Right
@@ -31,7 +34,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def clefSign(name: String)(parser: PrimativeParser[ClefSign]) = {
+		def clefSign(name: String)(parser: PrimativeParser[ClefSign]): XmlParser[ClefSign] = {
 			parser(name) {
 				case "G" => ClefSign_G
 				case "F" => ClefSign_F
@@ -44,15 +47,15 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def fifths(name: String)(parser: PrimativeParser[Fifths]) = {
+		def fifths(name: String)(parser: PrimativeParser[Fifths]): XmlParser[Fifths] = {
 			parser(name)(_.toInt)
 		}
 
-		def mode(name: String)(parser: PrimativeParser[Mode]) = {
+		def mode(name: String)(parser: PrimativeParser[Mode]): XmlParser[Mode] = {
 			parser(name)(identity)
 		}
 
-		def showFrets(name: String)(parser: PrimativeParser[ShowFrets]) = {
+		def showFrets(name: String)(parser: PrimativeParser[ShowFrets]): XmlParser[ShowFrets] = {
 			parser(name) {
 				case "numbers" => ShowFrets_Numbers
 				case "letters" => ShowFrets_Letters
@@ -60,15 +63,15 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def staffLine(name: String)(parser: PrimativeParser[StaffLine]) = {
+		def staffLine(name: String)(parser: PrimativeParser[StaffLine]): XmlParser[StaffLine] = {
 			parser(name)(_.toInt)
 		}
 
-		def staffNumber(name: String)(parser: PrimativeParser[StaffNumber]) = {
+		def staffNumber(name: String)(parser: PrimativeParser[StaffNumber]): XmlParser[StaffNumber] = {
 			parser(name)(s => StaffNumber(s.toInt))
 		}
 
-		def staffType(name: String)(parser: PrimativeParser[StaffType]) = {
+		def staffType(name: String)(parser: PrimativeParser[StaffType]): XmlParser[StaffType] = {
 			parser(name) {
 				case "ossia" => StaffType_Ossia
 				case "cue" => StaffType_Cue
@@ -79,7 +82,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def timeRelation(name: String)(parser: PrimativeParser[TimeRelation]) = {
+		def timeRelation(name: String)(parser: PrimativeParser[TimeRelation]): XmlParser[TimeRelation] = {
 			parser(name) {
 				case "parentheses" => TimeRelation_Parentheses
 				case "bracket" => TimeRelation_Bracket
@@ -91,7 +94,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def timeSeparator(name: String)(parser: PrimativeParser[TimeSeparator]) = {
+		def timeSeparator(name: String)(parser: PrimativeParser[TimeSeparator]): XmlParser[TimeSeparator] = {
 			parser(name) {
 				case "none" => TimeSeparator_None
 				case "horizontal" => TimeSeparator_Horizontal
@@ -102,7 +105,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def timeSymbol(name: String)(parser: PrimativeParser[TimeSymbol]) = {
+		def timeSymbol(name: String)(parser: PrimativeParser[TimeSymbol]): XmlParser[TimeSymbol] = {
 			parser(name) {
 				case "common" => TimeSymbol_Common
 				case "cut" => TimeSymbol_Cut
@@ -116,7 +119,7 @@ trait PrimativesParser[M[+_]] {
 	}
 
 	class PrimativeBarlineParser {
-		def backwardForward(name: String)(parser: PrimativeParser[BackwardForward]) = {
+		def backwardForward(name: String)(parser: PrimativeParser[BackwardForward]): XmlParser[BackwardForward] = {
 			parser(name) {
 				case "backward" => BF_Backward
 				case "forward" => BF_Forward
@@ -124,7 +127,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def barStyle(name: String)(parser: PrimativeParser[BarStyle]) = {
+		def barStyle(name: String)(parser: PrimativeParser[BarStyle]): XmlParser[BarStyle] = {
 			parser(name) {
 				case "regular" => BarStyle_Regular
 				case "dotted" => BarStyle_Dotted
@@ -141,11 +144,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def endingNumber(name: String)(parser: PrimativeParser[EndingNumber]) = {
+		def endingNumber(name: String)(parser: PrimativeParser[EndingNumber]): XmlParser[EndingNumber] = {
 			parser(name)(EndingNumber)
 		}
 
-		def rightLeftMiddle(name: String)(parser: PrimativeParser[RightLeftMiddle]) = {
+		def rightLeftMiddle(name: String)(parser: PrimativeParser[RightLeftMiddle]): XmlParser[RightLeftMiddle] = {
 			parser(name) {
 				case "right" => RLM_Right
 				case "left" => RLM_Left
@@ -154,7 +157,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def startStopDiscontinue(name: String)(parser: PrimativeParser[StartStopDiscontinue]) = {
+		def startStopDiscontinue(name: String)(parser: PrimativeParser[StartStopDiscontinue]): XmlParser[StartStopDiscontinue] = {
 			parser(name) {
 				case "start" => SSD_Start
 				case "stop" => SSD_Stop
@@ -163,7 +166,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def winged(name: String)(parser: PrimativeParser[Winged]) = {
+		def winged(name: String)(parser: PrimativeParser[Winged]): XmlParser[Winged] = {
 			parser(name) {
 				case "none" => Winged_None
 				case "straight" => Winged_Straight
@@ -176,7 +179,7 @@ trait PrimativesParser[M[+_]] {
 	}
 
 	class PrimativeCommonParser {
-		def aboveBelow(name: String)(parser: PrimativeParser[AboveBelow]) = {
+		def aboveBelow(name: String)(parser: PrimativeParser[AboveBelow]): XmlParser[AboveBelow] = {
 			parser(name) {
 				case "above" => AB_Above
 				case "below" => AB_Below
@@ -184,19 +187,19 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def beamLevel(name: String)(parser: PrimativeParser[BeamLevel]) = {
+		def beamLevel(name: String)(parser: PrimativeParser[BeamLevel]): XmlParser[BeamLevel] = {
 			parser(name)(s => BeamLevel(s.toInt))
 		}
 
-		def color(name: String)(parser: PrimativeParser[Color]) = {
+		def color(name: String)(parser: PrimativeParser[Color]): XmlParser[Color] = {
 			parser(name)(Color)
 		}
 
-		def commaSeparatedText(name: String)(parser: PrimativeParser[CommaSeparatedText]) = {
+		def commaSeparatedText(name: String)(parser: PrimativeParser[CommaSeparatedText]): XmlParser[CommaSeparatedText] = {
 			parser(name)(CommaSeparatedText)
 		}
 
-		def cssFontSize(name: String)(parser: PrimativeParser[CssFontSize]) = {
+		def cssFontSize(name: String)(parser: PrimativeParser[CssFontSize]): XmlParser[CssFontSize] = {
 			parser(name) {
 				case "xx-small" => CssFontSize_xxSmall
 				case "x-small" => CssFontSize_xSmall
@@ -209,11 +212,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def divisions(name: String)(parser: PrimativeParser[Divisions]) = {
+		def divisions(name: String)(parser: PrimativeParser[Divisions]): XmlParser[Divisions] = {
 			parser(name)(_.toDouble)
 		}
 
-		def enclosureShape(name: String)(parser: PrimativeParser[EnclosureShape]) = {
+		def enclosureShape(name: String)(parser: PrimativeParser[EnclosureShape]): XmlParser[EnclosureShape] = {
 			parser(name) {
 				case "rectangle" => EnclosureShape_Rectangle
 				case "square" => EnclosureShape_Square
@@ -227,7 +230,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def fermataShape(name: String)(parser: PrimativeParser[FermataShape]) = {
+		def fermataShape(name: String)(parser: PrimativeParser[FermataShape]): XmlParser[FermataShape] = {
 			parser(name) {
 				case "normal" => FermataShape_Normal
 				case "angled" => FermataShape_Angled
@@ -237,11 +240,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def fontSize(name: String)(cssParser: PrimativeParser[CssFontSize])(parser: PrimativeParser[FS_Double]) = {
+		def fontSize(name: String)(cssParser: PrimativeParser[CssFontSize])(parser: PrimativeParser[FS_Double]): StateT[Seq[Node], FontSize with Product with Serializable, M] = {
 			cssFontSize(name)(cssParser).map(FS_CssFontSize) <|> parser(name)(s => FS_Double(s.toDouble))
 		}
 
-		def fontStyle(name: String)(parser: PrimativeParser[FontStyle]) = {
+		def fontStyle(name: String)(parser: PrimativeParser[FontStyle]): XmlParser[FontStyle] = {
 			parser(name) {
 				case "normal" => FontStyle_Normal
 				case "italic" => FontStyle_Italic
@@ -249,7 +252,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def fontWeight(name: String)(parser: PrimativeParser[FontWeight]) = {
+		def fontWeight(name: String)(parser: PrimativeParser[FontWeight]): XmlParser[FontWeight] = {
 			parser(name) {
 				case "normal" => FontWeight_Normal
 				case "bold" => FontWeight_Bold
@@ -257,7 +260,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def leftCenterRight(name: String)(parser: PrimativeParser[LeftCenterRight]) = {
+		def leftCenterRight(name: String)(parser: PrimativeParser[LeftCenterRight]): XmlParser[LeftCenterRight] = {
 			parser(name) {
 				case "left" => LCR_Left
 				case "center" => LCR_Center
@@ -266,7 +269,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def leftRight(name: String)(parser: PrimativeParser[LeftRight]) = {
+		def leftRight(name: String)(parser: PrimativeParser[LeftRight]): XmlParser[LeftRight] = {
 			parser(name) {
 				case "left" => LR_Left
 				case "right" => LR_Right
@@ -274,7 +277,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def lineShape(name: String)(parser: PrimativeParser[LineShape]) = {
+		def lineShape(name: String)(parser: PrimativeParser[LineShape]): XmlParser[LineShape] = {
 			parser(name) {
 				case "straight" => LineShape_Straight
 				case "curved" => LineShape_Curved
@@ -282,7 +285,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def lineType(name: String)(parser: PrimativeParser[LineType]) = {
+		def lineType(name: String)(parser: PrimativeParser[LineType]): XmlParser[LineType] = {
 			parser(name) {
 				case "solid" => LineType_Solid
 				case "dashed" => LineType_Dashed
@@ -292,19 +295,19 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def midi16(name: String)(parser: PrimativeParser[Midi16]) = {
+		def midi16(name: String)(parser: PrimativeParser[Midi16]): XmlParser[Midi16] = {
 			parser(name)(s => Midi16(s.toInt))
 		}
 
-		def midi128(name: String)(parser: PrimativeParser[Midi128]) = {
+		def midi128(name: String)(parser: PrimativeParser[Midi128]): XmlParser[Midi128] = {
 			parser(name)(s => Midi128(s.toInt))
 		}
 
-		def midi16384(name: String)(parser: PrimativeParser[Midi16384]) = {
+		def midi16384(name: String)(parser: PrimativeParser[Midi16384]): XmlParser[Midi16384] = {
 			parser(name)(s => Midi16384(s.toInt))
 		}
 
-		def mute(name: String)(parser: PrimativeParser[Mute]) = {
+		def mute(name: String)(parser: PrimativeParser[Mute]): XmlParser[Mute] = {
 			parser(name) {
 				case "on" => Mute_On
 				case "off" => Mute_Off
@@ -325,26 +328,26 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def nonNegativeDecimal(name: String)(parser: PrimativeParser[NonNegativeDecimal]) = {
+		def nonNegativeDecimal(name: String)(parser: PrimativeParser[NonNegativeDecimal]): XmlParser[NonNegativeDecimal] = {
 			parser(name)(s => NonNegativeDecimal(s.toDouble))
 		}
 
-		def numberLevel(name: String)(parser: PrimativeParser[NumberLevel]) = {
+		def numberLevel(name: String)(parser: PrimativeParser[NumberLevel]): XmlParser[NumberLevel] = {
 			parser(name)(s => NumberLevel(s.toInt))
 		}
 
-		def numberOfLines(name: String)(parser: PrimativeParser[NumberOfLines]) = {
+		def numberOfLines(name: String)(parser: PrimativeParser[NumberOfLines]): XmlParser[NumberOfLines] = {
 			parser(name)(s => NumberOfLines(s.toInt))
 		}
 
-		def numberOrNormal(name: String)(parser: PrimativeParser[NumberOrNormal]) = {
+		def numberOrNormal(name: String)(parser: PrimativeParser[NumberOrNormal]): XmlParser[NumberOrNormal] = {
 			parser(name) {
 				case "normal" => NON_Normal
 				case other => NON_Double(other.toDouble)
 			}
 		}
 
-		def overUnder(name: String)(parser: PrimativeParser[OverUnder]) = {
+		def overUnder(name: String)(parser: PrimativeParser[OverUnder]): XmlParser[OverUnder] = {
 			parser(name) {
 				case "over" => OU_Over
 				case "under" => OU_Under
@@ -352,27 +355,27 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def percent(name: String)(parser: PrimativeParser[Percent]) = {
+		def percent(name: String)(parser: PrimativeParser[Percent]): XmlParser[Percent] = {
 			parser(name)(s => Percent(s.toDouble))
 		}
 
-		def positiveDecimal(name: String)(parser: PrimativeParser[PositiveDecimal]) = {
+		def positiveDecimal(name: String)(parser: PrimativeParser[PositiveDecimal]): XmlParser[PositiveDecimal] = {
 			parser(name)(s => PositiveDecimal(s.toDouble))
 		}
 
-		def positiveDivisions(name: String)(parser: PrimativeParser[PositiveDivisions]) = {
+		def positiveDivisions(name: String)(parser: PrimativeParser[PositiveDivisions]): XmlParser[PositiveDivisions] = {
 			parser(name)(s => PositiveDivisions(s.toDouble))
 		}
 
-		def positiveIntegerOrEmpty(name: String)(parser: PrimativeParser[PositiveIntegerOrEmpty]) = {
+		def positiveIntegerOrEmpty(name: String)(parser: PrimativeParser[PositiveIntegerOrEmpty]): XmlParser[PositiveIntegerOrEmpty] = {
 			parser(name)(s => PositiveIntegerOrEmpty(Option(s).filter(_.nonEmpty).map(_.toInt)))
 		}
 
-		def rotationDegrees(name: String)(parser: PrimativeParser[RotationDegrees]) = {
+		def rotationDegrees(name: String)(parser: PrimativeParser[RotationDegrees]): XmlParser[RotationDegrees] = {
 			parser(name)(s => RotationDegrees(s.toDouble))
 		}
 
-		def semiPitched(name: String)(parser: PrimativeParser[SemiPitched]) = {
+		def semiPitched(name: String)(parser: PrimativeParser[SemiPitched]): XmlParser[SemiPitched] = {
 			parser(name) {
 				case "high" => SemiPitched_High
 				case "medium-high" => SemiPitched_MediumHigh
@@ -384,7 +387,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def startNote(name: String)(parser: PrimativeParser[StartNote]) = {
+		def startNote(name: String)(parser: PrimativeParser[StartNote]): XmlParser[StartNote] = {
 			parser(name) {
 				case "upper" => StartNote_Upper
 				case "main" => StartNote_Main
@@ -393,7 +396,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def startStop(name: String)(parser: PrimativeParser[StartStop]) = {
+		def startStop(name: String)(parser: PrimativeParser[StartStop]): XmlParser[StartStop] = {
 			parser(name) {
 				case "start" => SS_Start
 				case "stop" => SS_Stop
@@ -401,7 +404,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def startStopContinue(name: String)(parser: PrimativeParser[StartStopContinue]) = {
+		def startStopContinue(name: String)(parser: PrimativeParser[StartStopContinue]): XmlParser[StartStopContinue] = {
 			parser(name) {
 				case "start" => SSC_Start
 				case "stop" => SSC_Stop
@@ -410,7 +413,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def startStopSingle(name: String)(parser: PrimativeParser[StartStopSingle]) = {
+		def startStopSingle(name: String)(parser: PrimativeParser[StartStopSingle]): XmlParser[StartStopSingle] = {
 			parser(name) {
 				case "start" => SSS_Start
 				case "stop" => SSS_Stop
@@ -419,11 +422,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def stringNumber(name: String)(parser: PrimativeParser[StringNumber]) = {
+		def stringNumber(name: String)(parser: PrimativeParser[StringNumber]): XmlParser[StringNumber] = {
 			parser(name)(s => StringNumber(s.toInt))
 		}
 
-		def symbolSize(name: String)(parser: PrimativeParser[SymbolSize]) = {
+		def symbolSize(name: String)(parser: PrimativeParser[SymbolSize]): XmlParser[SymbolSize] = {
 			parser(name) {
 				case "full" => SymbolSize_Full
 				case "cue" => SymbolSize_Cue
@@ -432,11 +435,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def tenths(name: String)(parser: PrimativeParser[Tenths]) = {
+		def tenths(name: String)(parser: PrimativeParser[Tenths]): XmlParser[Tenths] = {
 			parser(name)(_.toDouble)
 		}
 
-		def textDirection(name: String)(parser: PrimativeParser[TextDirection]) = {
+		def textDirection(name: String)(parser: PrimativeParser[TextDirection]): XmlParser[TextDirection] = {
 			parser(name) {
 				case "ltr" => TextDirection_LTR
 				case "rtl" => TextDirection_RTL
@@ -446,11 +449,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def timeOnly(name: String)(parser: PrimativeParser[TimeOnly]) = {
+		def timeOnly(name: String)(parser: PrimativeParser[TimeOnly]): XmlParser[TimeOnly] = {
 			parser(name)(TimeOnly)
 		}
 
-		def topBottom(name: String)(parser: PrimativeParser[TopBottom]) = {
+		def topBottom(name: String)(parser: PrimativeParser[TopBottom]): XmlParser[TopBottom] = {
 			parser(name) {
 				case "top" => TB_Top
 				case "bottom" => TB_Bottom
@@ -458,11 +461,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def trillBeats(name: String)(parser: PrimativeParser[TrillBeats]) = {
+		def trillBeats(name: String)(parser: PrimativeParser[TrillBeats]): XmlParser[TrillBeats] = {
 			parser(name)(s => TrillBeats(s.toDouble))
 		}
 
-		def trillStep(name: String)(parser: PrimativeParser[TrillStep]) = {
+		def trillStep(name: String)(parser: PrimativeParser[TrillStep]): XmlParser[TrillStep] = {
 			parser(name) {
 				case "whole" => TrillStep_Whole
 				case "half" => TrillStep_Half
@@ -471,7 +474,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def twoNoteTurn(name: String)(parser: PrimativeParser[TwoNoteTurn]) = {
+		def twoNoteTurn(name: String)(parser: PrimativeParser[TwoNoteTurn]): XmlParser[TwoNoteTurn] = {
 			parser(name) {
 				case "whole" => TwoNoteTurn_Whole
 				case "half" => TwoNoteTurn_Half
@@ -480,7 +483,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def upDown(name: String)(parser: PrimativeParser[UpDown]) = {
+		def upDown(name: String)(parser: PrimativeParser[UpDown]): XmlParser[UpDown] = {
 			parser(name) {
 				case "up" => UD_Up
 				case "down" => UD_Down
@@ -488,7 +491,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def uprightInverted(name: String)(parser: PrimativeParser[UprightInverted]) = {
+		def uprightInverted(name: String)(parser: PrimativeParser[UprightInverted]): XmlParser[UprightInverted] = {
 			parser(name) {
 				case "upright" => UI_Upright
 				case "inverted" => UI_Inverted
@@ -496,7 +499,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def vAlign(name: String)(parser: PrimativeParser[VAlign]) = {
+		def vAlign(name: String)(parser: PrimativeParser[VAlign]): XmlParser[VAlign] = {
 			parser(name) {
 				case "top" => VAlign_Top
 				case "middle" => VAlign_Middle
@@ -506,7 +509,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def vAlignImage(name: String)(parser: PrimativeParser[VAlignImage]) = {
+		def vAlignImage(name: String)(parser: PrimativeParser[VAlignImage]): XmlParser[VAlignImage] = {
 			parser(name) {
 				case "top" => VAlignImage_Top
 				case "middle" => VAlignImage_Middle
@@ -515,7 +518,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def yesNo(name: String)(parser: PrimativeParser[YesNo]) = {
+		def yesNo(name: String)(parser: PrimativeParser[YesNo]): XmlParser[YesNo] = {
 			parser(name) {
 				case "yes" => YN_Yes
 				case "no" => YN_No
@@ -523,21 +526,21 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def yesNoNumber(name: String)(yesNoParser: PrimativeParser[YesNo])(parser: PrimativeParser[YNN_Double]) = {
+		def yesNoNumber(name: String)(yesNoParser: PrimativeParser[YesNo])(parser: PrimativeParser[YNN_Double]): StateT[Seq[Node], YesNoNumber with Product with Serializable, M] = {
 			yesNo(name)(yesNoParser).map(YNN_YesNo) <|> parser(name)(s => YNN_Double(s.toDouble))
 		}
 
-		def date(name: String)(parser: PrimativeParser[Date]) = {
+		def date(name: String)(parser: PrimativeParser[Date]): XmlParser[Date] = {
 			parser(name)(Date)
 		}
 	}
 
 	class PrimativeDirectionParser {
-		def accordionMiddle(name: String)(parser: PrimativeParser[AccordionMiddle]) = {
+		def accordionMiddle(name: String)(parser: PrimativeParser[AccordionMiddle]): XmlParser[AccordionMiddle] = {
 			parser(name)(s => AccordionMiddle(s.toInt))
 		}
 
-		def beaterValue(name: String)(parser: PrimativeParser[BeaterValue]) = {
+		def beaterValue(name: String)(parser: PrimativeParser[BeaterValue]): XmlParser[BeaterValue] = {
 			parser(name) {
 				case "bow" => BeaterValue_Bow
 				case "chime hammer" => BeaterValue_ChimeHammer
@@ -560,7 +563,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def degreeSymbolValue(name: String)(parser: PrimativeParser[DegreeSymbolValue]) = {
+		def degreeSymbolValue(name: String)(parser: PrimativeParser[DegreeSymbolValue]): XmlParser[DegreeSymbolValue] = {
 			parser(name) {
 				case "major" => DegreeSymbolValue_Major
 				case "minor" => DegreeSymbolValue_Minor
@@ -571,7 +574,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def degreeTypeValue(name: String)(parser: PrimativeParser[DegreeTypeValue]) = {
+		def degreeTypeValue(name: String)(parser: PrimativeParser[DegreeTypeValue]): XmlParser[DegreeTypeValue] = {
 			parser(name) {
 				case "add" => DegreeTypeValue_Add
 				case "alter" => DegreeTypeValue_Alter
@@ -580,7 +583,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def effect(name: String)(parser: PrimativeParser[Effect]) = {
+		def effect(name: String)(parser: PrimativeParser[Effect]): XmlParser[Effect] = {
 			parser(name) {
 				case "anvil" => Effect_Anvil
 				case "auto horn" => Effect_AutoHorn
@@ -600,14 +603,14 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def glass(name: String)(parser: PrimativeParser[Glass]) = {
+		def glass(name: String)(parser: PrimativeParser[Glass]): XmlParser[Glass] = {
 			parser(name) {
 				case "wind chimes" => WindChimes
 				case other => sys.error(s"$other is not supported as an instance of Glass")
 			}
 		}
 
-		def harmonyType(name: String)(parser: PrimativeParser[HarmonyType]) = {
+		def harmonyType(name: String)(parser: PrimativeParser[HarmonyType]): XmlParser[HarmonyType] = {
 			parser(name) {
 				case "explicit" => HarmonyType_Explicit
 				case "implied" => HarmonyType_Implied
@@ -616,7 +619,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def kindValue(name: String)(parser: PrimativeParser[KindValue]) = {
+		def kindValue(name: String)(parser: PrimativeParser[KindValue]): XmlParser[KindValue] = {
 			parser(name) {
 				case "major" => KindValue_Major
 				case "minor" => KindValue_Minor
@@ -655,7 +658,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def lineEnd(name: String)(parser: PrimativeParser[LineEnd]) = {
+		def lineEnd(name: String)(parser: PrimativeParser[LineEnd]): XmlParser[LineEnd] = {
 			parser(name) {
 				case "up" => LineEnd_Up
 				case "down" => LineEnd_Down
@@ -666,7 +669,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def measureNumberingValue(name: String)(parser: PrimativeParser[MeasureNumberingValue]) = {
+		def measureNumberingValue(name: String)(parser: PrimativeParser[MeasureNumberingValue]): XmlParser[MeasureNumberingValue] = {
 			parser(name) {
 				case "none" => MNV_None
 				case "measure" => MNV_Measure
@@ -675,7 +678,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def membrane(name: String)(parser: PrimativeParser[Membrane]) = {
+		def membrane(name: String)(parser: PrimativeParser[Membrane]): XmlParser[Membrane] = {
 			parser(name) {
 				case "bass drum" => Membrane_BassDrum
 				case "bass drum on side" => Membrane_BassDrumOnSide
@@ -693,7 +696,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def metal(name: String)(parser: PrimativeParser[Metal]) = {
+		def metal(name: String)(parser: PrimativeParser[Metal]): XmlParser[Metal] = {
 			parser(name) {
 				case "almglocken" => Metal_AlmGlocken
 				case "bell" => Metal_Bell
@@ -722,7 +725,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def onOff(name: String)(parser: PrimativeParser[OnOff]) = {
+		def onOff(name: String)(parser: PrimativeParser[OnOff]): XmlParser[OnOff] = {
 			parser(name) {
 				case "on" => OO_On
 				case "off" => OO_Off
@@ -730,7 +733,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def pitched(name: String)(parser: PrimativeParser[Pitched]) = {
+		def pitched(name: String)(parser: PrimativeParser[Pitched]): XmlParser[Pitched] = {
 			parser(name) {
 				case "chimes" => Pitched_Chimes
 				case "glockenspiel" => Pitched_Glockenspiel
@@ -743,7 +746,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def principalVoiceSymbol(name: String)(parser: PrimativeParser[PrincipalVoiceSymbol]) = {
+		def principalVoiceSymbol(name: String)(parser: PrimativeParser[PrincipalVoiceSymbol]): XmlParser[PrincipalVoiceSymbol] = {
 			parser(name) {
 				case "Hauptstimme" => PVS_Hauptstimme
 				case "Nebenstimme" => PVS_Nebenstimme
@@ -753,7 +756,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def startStopChangeContinue(name: String)(parser: PrimativeParser[StartStopChangeContinue]) = {
+		def startStopChangeContinue(name: String)(parser: PrimativeParser[StartStopChangeContinue]): XmlParser[StartStopChangeContinue] = {
 			parser(name) {
 				case "start" => SSCC_Start
 				case "stop" => SSCC_Stop
@@ -763,7 +766,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def tipDirection(name: String)(parser: PrimativeParser[TipDirection]) = {
+		def tipDirection(name: String)(parser: PrimativeParser[TipDirection]): XmlParser[TipDirection] = {
 			parser(name) {
 				case "up" => TipDirection_Up
 				case "down" => TipDirection_Down
@@ -777,7 +780,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def stickLocation(name: String)(parser: PrimativeParser[StickLocation]) = {
+		def stickLocation(name: String)(parser: PrimativeParser[StickLocation]): XmlParser[StickLocation] = {
 			parser(name) {
 				case "center" => StickLocation_Center
 				case "rim" => StickLocation_Rim
@@ -787,7 +790,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def stickMaterial(name: String)(parser: PrimativeParser[StickMaterial]) = {
+		def stickMaterial(name: String)(parser: PrimativeParser[StickMaterial]): XmlParser[StickMaterial] = {
 			parser(name) {
 				case "soft" => StickMaterial_Soft
 				case "medium" => StickMaterial_Medium
@@ -798,7 +801,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def stickType(name: String)(parser: PrimativeParser[StickType]) = {
+		def stickType(name: String)(parser: PrimativeParser[StickType]): XmlParser[StickType] = {
 			parser(name) {
 				case "bass drum" => StickType_BassDrum
 				case "double bass drum" => StickType_DoubleBassDrum
@@ -809,7 +812,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def upDownStopContinue(name: String)(parser: PrimativeParser[UpDownStopContinue]) = {
+		def upDownStopContinue(name: String)(parser: PrimativeParser[UpDownStopContinue]): XmlParser[UpDownStopContinue] = {
 			parser(name) {
 				case "up" => UDSC_Up
 				case "down" => UDSC_Down
@@ -819,7 +822,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def wedgeType(name: String)(parser: PrimativeParser[WedgeType]) = {
+		def wedgeType(name: String)(parser: PrimativeParser[WedgeType]): XmlParser[WedgeType] = {
 			parser(name) {
 				case "crescendo" => WedgeType_Crescendo
 				case "diminuendo" => WedgeType_Diminuendo
@@ -829,7 +832,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def wood(name: String)(parser: PrimativeParser[Wood]) = {
+		def wood(name: String)(parser: PrimativeParser[Wood]): XmlParser[Wood] = {
 			parser(name) {
 				case "board clapper" => Wood_BoardClapper
 				case "cabasa" => Wood_Cabasa
@@ -851,15 +854,15 @@ trait PrimativesParser[M[+_]] {
 	}
 
 	class PrimativeLayoutParser {
-		def distanceType(name: String)(parser: PrimativeParser[DistanceType]) = {
+		def distanceType(name: String)(parser: PrimativeParser[DistanceType]): XmlParser[DistanceType] = {
 			parser(name)(identity)
 		}
 
-		def lineWidthType(name: String)(parser: PrimativeParser[LineWidthType]) = {
+		def lineWidthType(name: String)(parser: PrimativeParser[LineWidthType]): XmlParser[LineWidthType] = {
 			parser(name)(identity)
 		}
 
-		def marginType(name: String)(parser: PrimativeParser[MarginType]) = {
+		def marginType(name: String)(parser: PrimativeParser[MarginType]): XmlParser[MarginType] = {
 			parser(name) {
 				case "odd" => MarginType_Odd
 				case "even" => MarginType_Even
@@ -868,11 +871,11 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def millimeters(name: String)(parser: PrimativeParser[Millimeters]) = {
+		def millimeters(name: String)(parser: PrimativeParser[Millimeters]): XmlParser[Millimeters] = {
 			parser(name)(_.toDouble)
 		}
 
-		def noteSizeType(name: String)(parser: PrimativeParser[NoteSizeType]) = {
+		def noteSizeType(name: String)(parser: PrimativeParser[NoteSizeType]): XmlParser[NoteSizeType] = {
 			parser(name) {
 				case "cue" => NoteSizeType_Cue
 				case "grace" => NoteSizeType_Grace
@@ -883,7 +886,7 @@ trait PrimativesParser[M[+_]] {
 	}
 
 	class PrimativeNoteParser {
-		def accidentalValue(name: String)(parser: PrimativeParser[AccidentalValue]) = {
+		def accidentalValue(name: String)(parser: PrimativeParser[AccidentalValue]): XmlParser[AccidentalValue] = {
 			parser(name) {
 				case "sharp" => AccidentalValue_Sharp
 				case "natural" => AccidentalValue_Natural
@@ -923,7 +926,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def arrowDirection(name: String)(parser: PrimativeParser[ArrowDirection]) = {
+		def arrowDirection(name: String)(parser: PrimativeParser[ArrowDirection]): XmlParser[ArrowDirection] = {
 			parser(name) {
 				case "left" => ArrowDirection_Left
 				case "up" => ArrowDirection_Up
@@ -942,7 +945,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def arrowStyle(name: String)(parser: PrimativeParser[ArrowStyle]) = {
+		def arrowStyle(name: String)(parser: PrimativeParser[ArrowStyle]): XmlParser[ArrowStyle] = {
 			parser(name) {
 				case "single" => ArrowStyle_Single
 				case "double" => ArrowStyle_Double
@@ -955,7 +958,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def beamValue(name: String)(parser: PrimativeParser[BeamValue]) = {
+		def beamValue(name: String)(parser: PrimativeParser[BeamValue]): XmlParser[BeamValue] = {
 			parser(name) {
 				case "begin" => BeamValue_Begin
 				case "continue" => BeamValue_Continue
@@ -966,7 +969,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def breathMarkValue(name: String)(parser: PrimativeParser[BreathMarkValue]) = {
+		def breathMarkValue(name: String)(parser: PrimativeParser[BreathMarkValue]): XmlParser[BreathMarkValue] = {
 			parser(name) {
 				case "" => BreathMarkValue_EMPTY
 				case "comma" => BreathMarkValue_Comma
@@ -975,7 +978,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def circularArrow(name: String)(parser: PrimativeParser[CircularArrow]) = {
+		def circularArrow(name: String)(parser: PrimativeParser[CircularArrow]): XmlParser[CircularArrow] = {
 			parser(name) {
 				case "clockwise" => CircularArrow_ClockWise
 				case "anticlockwise" => CircularArrow_Anticlockwise
@@ -983,7 +986,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def fan(name: String)(parser: PrimativeParser[Fan]) = {
+		def fan(name: String)(parser: PrimativeParser[Fan]): XmlParser[Fan] = {
 			parser(name) {
 				case "accel" => Fan_Accel
 				case "rit" => Fan_Rit
@@ -992,7 +995,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def handbellValue(name: String)(parser: PrimativeParser[HandbellValue]) = {
+		def handbellValue(name: String)(parser: PrimativeParser[HandbellValue]): XmlParser[HandbellValue] = {
 			parser(name) {
 				case "damp" => HandbellValue_Damp
 				case "echo" => HandbellValue_Echo
@@ -1009,7 +1012,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def holeClosedLocation(name: String)(parser: PrimativeParser[HoleClosedLocation]) = {
+		def holeClosedLocation(name: String)(parser: PrimativeParser[HoleClosedLocation]): XmlParser[HoleClosedLocation] = {
 			parser(name) {
 				case "right" => HoleClosedLocation_Right
 				case "bottom" => HoleClosedLocation_Bottom
@@ -1019,7 +1022,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def holeClosedValue(name: String)(parser: PrimativeParser[HoleClosedValue]) = {
+		def holeClosedValue(name: String)(parser: PrimativeParser[HoleClosedValue]): XmlParser[HoleClosedValue] = {
 			parser(name) {
 				case "yes" => HoleClosedValue_Yes
 				case "no" => HoleClosedValue_No
@@ -1028,7 +1031,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def noteTypeValue(name: String)(parser: PrimativeParser[NoteTypeValue]) = {
+		def noteTypeValue(name: String)(parser: PrimativeParser[NoteTypeValue]): XmlParser[NoteTypeValue] = {
 			parser(name) {
 				case "1024th" => NoteTypeValue_th1024
 				case "512th" => NoteTypeValue_th512
@@ -1048,7 +1051,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def noteHeadValue(name: String)(parser: PrimativeParser[NoteHeadValue]) = {
+		def noteHeadValue(name: String)(parser: PrimativeParser[NoteHeadValue]): XmlParser[NoteHeadValue] = {
 			parser(name) {
 				case "slash" => NoteHeadValue_Slash
 				case "triangle" => NoteHeadValue_Triangle
@@ -1080,15 +1083,15 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def octave(name: String)(parser: PrimativeParser[Octave]) = {
+		def octave(name: String)(parser: PrimativeParser[Octave]): XmlParser[Octave] = {
 			parser(name)(s => Octave(s.toInt))
 		}
 
-		def semitones(name: String)(parser: PrimativeParser[Semitones]) = {
+		def semitones(name: String)(parser: PrimativeParser[Semitones]): XmlParser[Semitones] = {
 			parser(name)(_.toDouble)
 		}
 
-		def showTuplet(name: String)(parser: PrimativeParser[ShowTuplet]) = {
+		def showTuplet(name: String)(parser: PrimativeParser[ShowTuplet]): XmlParser[ShowTuplet] = {
 			parser(name) {
 				case "actual" => ShowTuplet_Actual
 				case "both" => ShowTuplet_Both
@@ -1097,7 +1100,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def stemValue(name: String)(parser: PrimativeParser[StemValue]) = {
+		def stemValue(name: String)(parser: PrimativeParser[StemValue]): XmlParser[StemValue] = {
 			parser(name) {
 				case "down" => StemValue_Down
 				case "up" => StemValue_Up
@@ -1107,7 +1110,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def step(name: String)(parser: PrimativeParser[Step]) = {
+		def step(name: String)(parser: PrimativeParser[Step]): XmlParser[Step] = {
 			parser(name) {
 				case "A" => Step_A
 				case "B" => Step_B
@@ -1120,7 +1123,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def syllabic(name: String)(parser: PrimativeParser[Syllabic]) = {
+		def syllabic(name: String)(parser: PrimativeParser[Syllabic]): XmlParser[Syllabic] = {
 			parser(name) {
 				case "single" => Syllabic_Single
 				case "begin" => Syllabic_Begin
@@ -1130,13 +1133,13 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def tremoloMarks(name: String)(parser: PrimativeParser[TremoloMarks]) = {
+		def tremoloMarks(name: String)(parser: PrimativeParser[TremoloMarks]): XmlParser[TremoloMarks] = {
 			parser(name)(s => TremoloMarks(s.toInt))
 		}
 	}
 
 	class PrimativeScoreParser {
-		def groupBarlineValue(name: String)(parser: PrimativeParser[GroupBarlineValue]) = {
+		def groupBarlineValue(name: String)(parser: PrimativeParser[GroupBarlineValue]): XmlParser[GroupBarlineValue] = {
 			parser(name) {
 				case "yes" => GroupBarlineValue_Yes
 				case "no" => GroupBarlineValue_No
@@ -1145,7 +1148,7 @@ trait PrimativesParser[M[+_]] {
 			}
 		}
 
-		def groupSymbolValue(name: String)(parser: PrimativeParser[GroupSymbolValue]) = {
+		def groupSymbolValue(name: String)(parser: PrimativeParser[GroupSymbolValue]): XmlParser[GroupSymbolValue] = {
 			parser(name) {
 				case "none" => GroupSymbolValue_None
 				case "brace" => GroupSymbolValue_Brace

@@ -7,15 +7,18 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupLayout.{AllMargin
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupNote._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupScore.{ScoreHeader, _}
 
-trait GroupParser[M[+_]] {
-	this: ComplexParser[M] with AttributeGroupsParser[M] with PrimativesParser[M] with XmlParser[M] =>
+trait GroupParserComponent[M[+_]] {
+	this: ComplexParserComponent[M]
+		with AttributeGroupsParserComponent[M]
+		with PrimativesParserComponent[M]
+		with XmlParserComponent[M] =>
 
-	protected val groupAttributesParser = new GroupAttributesParser
-	protected val groupCommonParser = new GroupCommonParser
-	protected val groupDirectionParser = new GroupDirectionParser
-	protected val groupLayoutParser = new GroupLayoutParser
-	protected val groupNoteParser = new GroupNoteParser
-	protected val groupScoreParser = new GroupScoreParser
+	protected val groupAttributesParser: GroupAttributesParser
+	protected val groupCommonParser: GroupCommonParser
+	protected val groupDirectionParser: GroupDirectionParser
+	protected val groupLayoutParser: GroupLayoutParser
+	protected val groupNoteParser: GroupNoteParser
+	protected val groupScoreParser: GroupScoreParser
 
 	class GroupAttributesParser {
 

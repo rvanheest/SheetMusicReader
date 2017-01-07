@@ -2,7 +2,7 @@ package nl.rvanheest.sheetmusicreader.musicxml.parser
 
 import nl.rvanheest.sheetmusicreader.monadics.{MonadPlus, StateT}
 
-trait Parser {
+trait ParserComponent {
 
 	object Parser {
 		def apply[S, A, M[+_]](parser: S => M[(A, S)])(implicit m: MonadPlus[M]): StateT[S, A, M] = {

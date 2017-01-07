@@ -4,14 +4,15 @@ import nl.rvanheest.sheetmusicreader.monadics.{MonadPlus, OptionIsMonadPlus, Try
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeAttributes._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
-import nl.rvanheest.sheetmusicreader.musicxml.parser.{PrimativesParser, XmlParser}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeDirection.AccordionMiddle
+import nl.rvanheest.sheetmusicreader.musicxml.parser.{PrimativesParserComponent, XmlParserComponent}
 import org.junit.Test
 import org.junit.Assert._
 
 import scala.util.Try
 import scala.xml.Node
 
-trait PrimativesParserTest[M[+ _]] extends PrimativesParser[M] with XmlParser[M] {
+trait PrimativesParserTest[M[+ _]] extends PrimativesParserComponent[M] with XmlParserComponent[M] {
 
 	import XmlParser._
 
@@ -20,13 +21,13 @@ trait PrimativesParserTest[M[+ _]] extends PrimativesParser[M] with XmlParser[M]
 
 	def isEmpty[T](m: M[T]): Boolean
 
-	def nodeTest[T, S](prim: TestParser[T])(xs: (Node, S)*) = {
+	def nodeTest[T](prim: TestParser[T])(xs: (Node, T)*): Unit = {
 		xs.foreach {
 			case (xml, expected) => assertEquals(mp.create(expected), prim(node).eval(xml))
 		}
 	}
 
-	def nodeError[T, S](prim: TestParser[T])(xmls: Node*) = {
+	def nodeError[T](prim: TestParser[T])(xmls: Node*): Unit = {
 		xmls.map(xml => prim(node).eval(xml))
 			.foreach(mt => assertTrue(s"$mt is not empty", isEmpty(mt)))
 	}
@@ -716,6 +717,15 @@ trait PrimativeCommonParserTest[M[+ _]] extends PrimativesParserTest[M] {
 trait PrimativeDirectionParserTest[M[+_]] extends PrimativesParserTest[M] {
 
 	import primativeDirectionParser._
+
+	def accordionMiddleTest() = {
+		nodeTest(accordionMiddle("foo"))(
+			(<foo>1</foo>, AccordionMiddle(1)),
+			(<foo>2</foo>, AccordionMiddle(2)),
+			(<foo>3</foo>, AccordionMiddle(3))
+		)
+		nodeError(accordionMiddle("foo"))(<foo>0</foo>, <foo>-5</foo>, <foo>4</foo>, <foo>xxx</foo>)
+	}
 }
 
 trait PrimativeLayoutParserTest[M[+_]] extends PrimativesParserTest[M] {
@@ -743,12 +753,30 @@ trait PrimativesParserTestSequence[M[+ _]] extends PrimativeAttributesParserTest
 
 class PrimativesParserOptionTest extends PrimativesParserTestSequence[Option] {
 	protected implicit val mp: MonadPlus[Option] = OptionIsMonadPlus
+	protected override val xmlParser: XmlParser.type = XmlParser
+
+	protected override val primativeAttributesParser = new PrimativeAttributesParser
+	protected override val primativeBarlineParser = new PrimativeBarlineParser
+	protected override val primativeCommonParser = new PrimativeCommonParser
+	protected override val primativeDirectionParser = new PrimativeDirectionParser
+	protected override val primativeLayoutParser = new PrimativeLayoutParser
+	protected override val primativeNoteParser = new PrimativeNoteParser
+	protected override val primativeScoreParser = new PrimativeScoreParser
 
 	def isEmpty[T](m: Option[T]): Boolean = m.isEmpty
 }
 
 class PrimativesParserTryTest extends PrimativesParserTestSequence[Try] {
 	protected implicit val mp: MonadPlus[Try] = TryIsMonadPlus
+	protected override val xmlParser: XmlParser.type = XmlParser
+
+	protected override val primativeAttributesParser = new PrimativeAttributesParser
+	protected override val primativeBarlineParser = new PrimativeBarlineParser
+	protected override val primativeCommonParser = new PrimativeCommonParser
+	protected override val primativeDirectionParser = new PrimativeDirectionParser
+	protected override val primativeLayoutParser = new PrimativeLayoutParser
+	protected override val primativeNoteParser = new PrimativeNoteParser
+	protected override val primativeScoreParser = new PrimativeScoreParser
 
 	def isEmpty[T](m: Try[T]): Boolean = m.isFailure
 }

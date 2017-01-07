@@ -1,7 +1,7 @@
 package nl.rvanheest.sheetmusicreader.test.parser
 
 import nl.rvanheest.sheetmusicreader.monadics.{MonadPlus, OptionIsMonadPlus, TryIsMonadPlus}
-import nl.rvanheest.sheetmusicreader.musicxml.parser.XmlParser
+import nl.rvanheest.sheetmusicreader.musicxml.parser.XmlParserComponent
 import org.junit.Test
 import org.junit.Assert._
 
@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.util.Try
 import scala.xml.{NamespaceBinding, TopScope}
 
-abstract class XmlParserTest[M[+_]] extends XmlParser[M] {
+abstract class XmlParserTest[M[+_]] extends XmlParserComponent[M] {
 
 	import XmlParser._
 
@@ -181,9 +181,9 @@ abstract class XmlParserTest[M[+_]] extends XmlParser[M] {
 		case class A(s: String)
 
 		val xml = <foo bar="abc">1</foo>
-		val parser = attribute("bar")(new A(_))
+		val parser = attribute("bar")(A)
 
-		assertEquals(mp.create(new A("abc"), xml), parser.run(xml))
+		assertEquals(mp.create(A("abc"), xml), parser.run(xml))
 	}
 
 	@Test
@@ -191,9 +191,9 @@ abstract class XmlParserTest[M[+_]] extends XmlParser[M] {
 		case class A(s: String)
 
 		val xml = <foo bar="abc" baz="def">1</foo>
-		val parser = attribute("bar")(new A(_))
+		val parser = attribute("bar")(A)
 
-		assertEquals(mp.create(new A("abc"), xml), parser.run(xml))
+		assertEquals(mp.create(A("abc"), xml), parser.run(xml))
 	}
 
 	@Test
@@ -201,9 +201,9 @@ abstract class XmlParserTest[M[+_]] extends XmlParser[M] {
 		case class A(s: String)
 
 		val xml = <foo baz="def" bar="abc">1</foo>
-		val parser = attribute("bar")(new A(_))
+		val parser = attribute("bar")(A)
 
-		assertEquals(mp.create(new A("abc"), xml), parser.run(xml))
+		assertEquals(mp.create(A("abc"), xml), parser.run(xml))
 	}
 
 	@Test
@@ -259,13 +259,15 @@ abstract class XmlParserTest[M[+_]] extends XmlParser[M] {
 }
 
 class XmlParserOptionTest extends XmlParserTest[Option] {
-	implicit val mp: MonadPlus[Option] = OptionIsMonadPlus
+	protected override implicit val mp: MonadPlus[Option] = OptionIsMonadPlus
+	protected override val xmlParser: XmlParser.type = XmlParser
 
 	def isEmpty[T](m: Option[T]): Boolean = m.isEmpty
 }
 
 class XmlParserTryTest extends XmlParserTest[Try] {
-	implicit val mp: MonadPlus[Try] = TryIsMonadPlus
+	protected override implicit val mp: MonadPlus[Try] = TryIsMonadPlus
+	protected override val xmlParser: XmlParser.type = XmlParser
 
 	def isEmpty[T](m: Try[T]): Boolean = m.isFailure
 }

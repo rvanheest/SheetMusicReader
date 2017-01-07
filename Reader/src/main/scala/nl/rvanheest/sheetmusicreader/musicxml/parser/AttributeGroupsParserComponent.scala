@@ -8,13 +8,14 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGro
 import scala.language.postfixOps
 import scala.xml.{NamespaceBinding, TopScope}
 
-trait AttributeGroupsParser[M[+_]] {
-	this: PrimativesParser[M] with XmlParser[M] =>
+trait AttributeGroupsParserComponent[M[+_]] {
+	this: PrimativesParserComponent[M]
+		with XmlParserComponent[M] =>
 
-	protected val attributeGroupsCommonParser = new AttributeGroupsCommonParser
-	protected val attributeGroupsDirectionParser = new AttributeGroupsDirectionParser
-	protected val attributeGroupsLinkParser = new AttributeGroupsLinkParser
-	protected val attributeGroupsScoreParser = new AttributeGroupsScoreParser
+	protected val attributeGroupsCommonParser: AttributeGroupsCommonParser
+	protected val attributeGroupsDirectionParser: AttributeGroupsDirectionParser
+	protected val attributeGroupsLinkParser: AttributeGroupsLinkParser
+	protected val attributeGroupsScoreParser: AttributeGroupsScoreParser
 
 	class AttributeGroupsCommonParser {
 

@@ -12,18 +12,21 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexScore.{Work, 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline.RLM_Right
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
 
-trait ComplexParser[M[+_]] {
-	this: GroupParser[M] with AttributeGroupsParser[M] with PrimativesParser[M] with XmlParser[M] =>
+trait ComplexParserComponent[M[+_]] {
+	this: GroupParserComponent[M]
+		with AttributeGroupsParserComponent[M]
+		with PrimativesParserComponent[M]
+		with XmlParserComponent[M] =>
 
-	protected val complexAttributesParser = new ComplexAttributesParser
-	protected val complexBarlineParser = new ComplexBarlineParser
-	protected val complexCommonParser = new ComplexCommonParser
-	protected val complexDirectionParser = new ComplexDirectionParser
-	protected val complexIdentityParser = new ComplexIdentityParser
-	protected val complexLayoutParser = new ComplexLayoutParser
-	protected val complexLinkParser = new ComplexLinkParser
-	protected val complexNoteParser = new ComplexNoteParser
-	protected val complexScoreParser = new ComplexScoreParser
+	protected val complexAttributesParser: ComplexAttributesParser
+	protected val complexBarlineParser: ComplexBarlineParser
+	protected val complexCommonParser: ComplexCommonParser
+	protected val complexDirectionParser: ComplexDirectionParser
+	protected val complexIdentityParser: ComplexIdentityParser
+	protected val complexLayoutParser: ComplexLayoutParser
+	protected val complexLinkParser: ComplexLinkParser
+	protected val complexNoteParser: ComplexNoteParser
+	protected val complexScoreParser: ComplexScoreParser
 
 	class ComplexAttributesParser {
 
