@@ -370,7 +370,7 @@ trait ComplexParserComponent {
 		}
 
 		def xmlToEmpty(name: String): XmlParser[Empty] = {
-			nodeWithName(name).map(_ => ())
+			nodeWithName(name).map(_ => Empty())
 		}
 
 		def xmlToEmptyPlacement(name: String): XmlParser[EmptyPlacement] = {

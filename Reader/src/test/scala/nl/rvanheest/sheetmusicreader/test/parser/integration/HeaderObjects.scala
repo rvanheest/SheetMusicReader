@@ -39,8 +39,8 @@ object HeaderObjects {
 
 	val movementTitle = "movementTitle"
 
-	val defaults = {
-		val scaling = new Scaling(6.2831, 40)
+	val defaults: Defaults = {
+		val scaling = Scaling(6.2831, 40)
 		val layout = LayoutObjects.layout
 		val appearance = LayoutObjects.appearance
 		val musicFont = EmptyFont(Font(
@@ -71,14 +71,14 @@ object HeaderObjects {
 			Option(wordFont), lyricFont, lyricsLanguage)
 	}
 
-	val credit1 = {
+	val credit1: Credit = {
 		val creditType = List("foo", "bar")
 		val link = List(
 			Link(
-				LinkAttributes("href1", "simple"),
+				LinkAttributes("href1"),
 				Option("name"),
 				ElementPosition(Option("elementX"), Option(2))),
-			Link(LinkAttributes("href2", "simple")))
+			Link(LinkAttributes("href2")))
 		val bookmark = List(
 			Bookmark("bm1", Option("nm1"), ElementPosition(Option("elementY"))),
 			Bookmark("bm2", Option("nm2")))
@@ -91,11 +91,11 @@ object HeaderObjects {
 		Credit(creditType, link, bookmark, creditChoice, Option(page))
 	}
 
-	val credit2 = {
+	val credit2: Credit = {
 		val creditType = List("foobar", "barfoo")
 		val link = List(
-			Link(LinkAttributes("href3", "simple")),
-			Link(LinkAttributes("href4", "simple")))
+			Link(LinkAttributes("href3")),
+			Link(LinkAttributes("href4")))
 		val bookmark = List(
 			Bookmark("bm3"),
 			Bookmark("bm4"))
@@ -103,8 +103,8 @@ object HeaderObjects {
 			creditWords = FormattedText("foobar"),
 			links = List(
 				(List(
-					Link(LinkAttributes("href5", "simple")),
-					Link(LinkAttributes("href6", "simple"))),
+					Link(LinkAttributes("href5")),
+					Link(LinkAttributes("href6"))),
 					List(Bookmark("x")),
 					FormattedText(
 						"word1",
@@ -144,15 +144,15 @@ object HeaderObjects {
 			Option(GroupBarline(
 				GroupBarlineValue_Yes,
 				Color(Option(PrimColor("#800080"))))),
-			Option(()),
+			Option(Empty()),
 			Editorial(
 				Option(FormattedText("footnote text")),
 				Option(Level(
 					"level text",
 					Option(YN_No),
 					LevelDisplay(Option(YN_Yes), Option(YN_Yes), Option(SymbolSize_Cue))))),
-			SS_Start,
-			"1"),
+			SS_Start
+		),
 		PartGroup(
 			groupName = Option(GroupName("groupName2")),
 			groupAbbreviation = Option(GroupName("groupAbbreviation2")),
@@ -185,7 +185,7 @@ object HeaderObjects {
 			scoreInstrument = List(
 				ScoreInstrument(
 					instrumentName = "Midi_54",
-					instrumentChoice = Option(SoloChoice(())),
+					instrumentChoice = Option(SoloChoice(Empty())),
 					id = "P2-I2"),
 				ScoreInstrument(
 					instrumentName = "Midi_54a",

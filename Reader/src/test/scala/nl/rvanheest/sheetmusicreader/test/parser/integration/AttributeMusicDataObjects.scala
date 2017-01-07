@@ -17,7 +17,7 @@ package nl.rvanheest.sheetmusicreader.test.parser.integration
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.AttributeGroups.AttributeGroupsCommon._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexAttributes.{Directive, _}
-import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon.{FormattedText, Level}
+import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexCommon.{Empty, FormattedText, Level}
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupAttributes.{NonTraditionalKey, TimeSignature, TraditionalKey}
 import nl.rvanheest.sheetmusicreader.musicxml.model.Group.GroupCommon.{Editorial, Tuning}
@@ -121,7 +121,7 @@ object AttributeMusicDataObjects {
 				printSpacing = PrintSpacing(Option(YN_Yes))),
 			StaffDetails()),
 		List(
-			Transpose(Option(12), 13, Option(15), Option(())),
+			Transpose(Option(12), 13, Option(15), Option(Empty())),
 			Transpose(chromatic = 14, number = Option(StaffNumber(20)))),
 		List(
 			Directive(
@@ -143,7 +143,7 @@ object AttributeMusicDataObjects {
 				MeasureRepeatChoice(MeasureRepeat(ssType = SS_Stop))),
 			MeasureStyle(
 				BeatRepeatChoice(BeatRepeat(
-					Option(Group.GroupAttributes.Slash(NoteTypeValue_Maxima, List((), ()))),
+					Option(Group.GroupAttributes.Slash(NoteTypeValue_Maxima, List.fill(2)(Empty()))),
 					SS_Start,
 					Option(15))),
 				Option(StaffNumber(3))),
@@ -158,7 +158,7 @@ object AttributeMusicDataObjects {
 				Option(StaffNumber(5))),
 			MeasureStyle(
 				SlashChoice(Slash(
-					Option(Group.GroupAttributes.Slash(NoteTypeValue_th16, List(()))),
+					Option(Group.GroupAttributes.Slash(NoteTypeValue_th16, List(Empty()))),
 					SS_Start,
 					useStems = Option(YN_No)))))))
 

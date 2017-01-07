@@ -33,7 +33,7 @@ object NoteMusicDataObjects {
 				makeTime = Option(30),
 				slash = Option(YN_No)),
 			fullNote = FullNote(
-				chord = Option(()),
+				chord = Option(Empty()),
 				choice = PitchChoice(Pitch(step = Step_A, octave = Octave(1)))
 			),
 			tie = List(Tie(SS_Start, Option(TimeOnly("6"))), Tie(SS_Stop))),
@@ -46,7 +46,7 @@ object NoteMusicDataObjects {
 		dot = List(EmptyPlacement(placement = Placement(Option(AB_Above))), EmptyPlacement()),
 		accidental = Option(Accidental(AccidentalValue_SlashFlat, Option(YN_No), Option(YN_Yes))),
 		timeModification = Option(TimeModification(1, 2,
-			Option((NoteTypeValue_Quarter, List((), ()))))),
+			Option((NoteTypeValue_Quarter, List(Empty(), Empty()))))),
 		stem = Option(Stem(StemValue_Down, YPosition(Option(10)))),
 		notehead = Option(NoteHead(NoteHeadValue_Cross, Option(YN_Yes), Option(YN_No))),
 		noteheadText = Option(NoteHeadText(List(
@@ -118,11 +118,11 @@ object NoteMusicDataObjects {
 						UpBowTechnicalChoice(EmptyPlacement(placement = Placement(Option(AB_Below)))),
 						UpBowTechnicalChoice(EmptyPlacement(PrintStyle(Position(Option(5))))),
 						DownBowTechnicalChoice(),
-						HarmonicTechnicalChoice(Harmonic(Option(Natural(())), Option(BasePitch(())))),
+						HarmonicTechnicalChoice(Harmonic(Option(Natural(Empty())), Option(BasePitch(Empty())))),
 						HarmonicTechnicalChoice(Harmonic(
-							Option(Artificial(())),
-							Option(TouchingPitch(())))),
-						HarmonicTechnicalChoice(Harmonic(harmonicPitchChoice = Option(SoundingPitch(())))),
+							Option(Artificial(Empty())),
+							Option(TouchingPitch(Empty())))),
+						HarmonicTechnicalChoice(Harmonic(harmonicPitchChoice = Option(SoundingPitch(Empty())))),
 						HarmonicTechnicalChoice(),
 						OpenStringTechnicalChoice(),
 						ThumbPositionTechnicalChoice(),
@@ -144,12 +144,12 @@ object NoteMusicDataObjects {
 						PullOffTechnicalChoice(HammerOnPullOff("hammer 2", SS_Stop, NumberLevel(4))),
 						BendTechnicalChoice(Bend(
 							3.14,
-							Option(PreBand(())),
+							Option(PreBand(Empty())),
 							Option(PlacementText("met bar")),
 							bendSound = BendSound(beats = Option(TrillBeats(2))))),
 						BendTechnicalChoice(Bend(
 							1.4142,
-							Option(Release(())),
+							Option(Release(Empty())),
 							bendSound = BendSound(beats = Option(TrillBeats(5))))),
 						TapTechnicalChoice(PlacementText("tapjes")),
 						HeelTechnicalChoice(HeelToe(substitution = Option(YN_No))),
@@ -259,8 +259,8 @@ object NoteMusicDataObjects {
 					),
 					extend = Option(Extend(Option(SSC_Start)))
 				),
-				endLine = Option(()),
-				endParagraph = Option(()),
+				endLine = Option(Empty()),
+				endParagraph = Option(Empty()),
 				editorial = Editorial(
 					Option(FormattedText("lyric footnote")),
 					Option(Level(
@@ -273,25 +273,25 @@ object NoteMusicDataObjects {
 				extend = Option(Extend(Option(SSC_Continue))))),
 			Lyric(ExtendLyricsChoice(Extend(Option(SSC_Stop)))),
 			Lyric(
-				LaughingLyricsChoice(()),
+				LaughingLyricsChoice(Empty()),
 				number = Option("11"),
 				name = Option("laughing lyric"),
 				justify = Justify(Option(LCR_Left)),
 				placement = Placement(Option(AB_Below)),
 				printObject = PrintObject(Option(YN_No))),
-			Lyric(HummingLyricsChoice(()))
+			Lyric(HummingLyricsChoice(Empty()))
 		),
 		play = Option(Play(id = Option("P1-I1")))
 	))
 
 	val note1 = NoteChoice(Note(
 		noteChoice = CueNoteChoice(
-			(),
+			Empty(),
 			FullNote(choice = UnpitchedChoice(Unpitched(Option(DisplayStepOctave(Step_A, Octave(4)))))),
 			PositiveDivisions(3)),
 		dot = List(EmptyPlacement()),
 		accidental = Option(Accidental(AccidentalValue_Flat)),
-		timeModification = Option(TimeModification(3, 4, Option((NoteTypeValue_Half, List())))),
+		timeModification = Option(TimeModification(3, 4, Option((NoteTypeValue_Half, List.empty)))),
 		stem = Option(Stem(StemValue_Double)),
 		notehead = Option(NoteHead(NoteHeadValue_X)),
 		noteheadText = Option(NoteHeadText(List(

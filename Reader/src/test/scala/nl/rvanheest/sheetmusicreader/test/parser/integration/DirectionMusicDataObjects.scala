@@ -87,36 +87,36 @@ object DirectionMusicDataObjects {
 				PrintStyleAlign(valign = VAlign(Option(VAlign_Top))))),
 			MetronomeChoice(Metronome(
 				MetronomeBeatChoice(
-					BeatUnit(NoteTypeValue_Half, List((), ())),
+					BeatUnit(NoteTypeValue_Half, List(Empty(), Empty())),
 					MinuteChoice(PerMinute("per minute"))),
 				parentheses = Option(YN_Yes))),
 			MetronomeChoice(Metronome(
 				MetronomeBeatChoice(
 					BeatUnit(NoteTypeValue_Half),
-					BeatChoice(BeatUnit(NoteTypeValue_Whole, List(())))),
+					BeatChoice(BeatUnit(NoteTypeValue_Whole, List(Empty())))),
 				justify = Justify(Option(LCR_Center)))),
 			MetronomeChoice(Metronome(
 				MetronomeBeatChoice(
-					BeatUnit(NoteTypeValue_Half, List(())),
-					BeatChoice(BeatUnit(NoteTypeValue_Whole, List(())))))),
+					BeatUnit(NoteTypeValue_Half, List(Empty())),
+					BeatChoice(BeatUnit(NoteTypeValue_Whole, List(Empty())))))),
 			MetronomeChoice(Metronome(
 				MetronomeNoteChoice(
 					List(
 						MetronomeNote(
 							NoteTypeValue_Eighth,
-							List((), ()),
+							List(Empty(), Empty()),
 							List(MetronomeBeam(BeamValue_Begin, BeamLevel(2)), MetronomeBeam(BeamValue_Continue)),
 							Option(MetronomeTuplet(
-								TimeModification(0, 1, Option((NoteTypeValue_Whole, List((), ())))),
+								TimeModification(0, 1, Option((NoteTypeValue_Whole, List(Empty(), Empty())))),
 								SS_Start,
 								Option(YN_Yes),
 								Option(ShowTuplet_Both)))),
 						MetronomeNote(
 							NoteTypeValue_Quarter,
-							List(()),
+							List(Empty()),
 							List(MetronomeBeam(BeamValue_ForwardHook)),
 							Option(MetronomeTuplet(
-								TimeModification(2, 3, Option((NoteTypeValue_Whole, List()))),
+								TimeModification(2, 3, Option((NoteTypeValue_Whole, List.empty))),
 								SS_Stop))),
 						MetronomeNote(
 							NoteTypeValue_Half,
@@ -162,9 +162,9 @@ object DirectionMusicDataObjects {
 				PVS_Hauptstimme,
 				PrintStyleAlign(valign = VAlign(Option(VAlign_Top))))),
 			AccordionRegistrationChoice(AccordionRegistration(
-				Option(()),
+				Option(Empty()),
 				Option(AccordionMiddle(2)),
-				Option(()),
+				Option(Empty()),
 				PrintStyleAlign(valign = VAlign(Option(VAlign_Top))))),
 			AccordionRegistrationChoice(AccordionRegistration(
 				printStyleAlign = PrintStyleAlign(halign = HAlign(Option(LCR_Right))))),
@@ -177,7 +177,7 @@ object DirectionMusicDataObjects {
 				Percussion(PitchedPercussion(Pitched_Chimes)),
 				Percussion(MembranePercussion(Membrane_BassDrumOnSide)),
 				Percussion(EffectPercussion(Effect_Anvil)),
-				Percussion(TimpaniPercussion(())),
+				Percussion(TimpaniPercussion(Empty())),
 				Percussion(BeaterPercussion(Beater(BeaterValue_Hammer, Option(TipDirection_Southeast)))),
 				Percussion(BeaterPercussion(Beater(BeaterValue_Finger))),
 				Percussion(StickPercussion(Stick(

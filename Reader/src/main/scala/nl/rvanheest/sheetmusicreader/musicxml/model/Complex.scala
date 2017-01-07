@@ -506,7 +506,7 @@ object Complex {
 		/**
 			* The empty type represents an empty element with no attributes.
 			*/
-		type Empty = Unit
+		case class Empty()
 
 		/**
 			* The empty-placement type represents an empty element with print-style and placement attributes.
