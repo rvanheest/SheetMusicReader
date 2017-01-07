@@ -12,11 +12,11 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Complex.ComplexScore.{Work, 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline.RLM_Right
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
 
-trait ComplexParserComponent[M[+_]] {
-	this: GroupParserComponent[M]
-		with AttributeGroupsParserComponent[M]
-		with PrimativesParserComponent[M]
-		with XmlParserComponent[M] =>
+trait ComplexParserComponent {
+	this: GroupParserComponent
+		with AttributeGroupsParserComponent
+		with PrimativesParserComponent
+		with XmlParserComponent =>
 
 	protected val complexAttributesParser: ComplexAttributesParser
 	protected val complexBarlineParser: ComplexBarlineParser
@@ -121,8 +121,8 @@ trait ComplexParserComponent[M[+_]] {
 				printObject <- xmlToPrintObject
 				key <- branchNode(name) {
 					for {
-						ntrKey <- xmlToTraditionalKey.map(TraditionalKeyChoice(_))
-						  .orElse(xmlToNonTraditionalKey.many.map(NonTraditionalKeysChoice(_)))
+						ntrKey <- xmlToTraditionalKey.map(TraditionalKeyChoice)
+						  .orElse(xmlToNonTraditionalKey.many.map(NonTraditionalKeysChoice))
 						octave <- xmlToKeyOctave("key-octave").many
 					} yield Key(ntrKey, octave, number, printStyle, printObject)
 				}
@@ -151,10 +151,10 @@ trait ComplexParserComponent[M[+_]] {
 				font <- xmlToFont
 				color <- xmlToColor
 				choice <- branchNode(name) {
-					xmlToMultipleRest("multiple-rest").map(MultipleRestChoice(_))
-						.orElse(xmlToMeasureRepeat("measure-repeat").map(MeasureRepeatChoice(_)))
-						.orElse(xmlToBeatRepeat("beat-repeat").map(BeatRepeatChoice(_)))
-						.orElse(xmlToSlash("slash").map(SlashChoice(_)))
+					xmlToMultipleRest("multiple-rest").map(MultipleRestChoice)
+						.orElse(xmlToMeasureRepeat("measure-repeat").map(MeasureRepeatChoice))
+						.orElse(xmlToBeatRepeat("beat-repeat").map(BeatRepeatChoice))
+						.orElse(xmlToSlash("slash").map(SlashChoice))
 				}
 			} yield MeasureStyle(choice, number, font, color)
 		}
@@ -224,7 +224,7 @@ trait ComplexParserComponent[M[+_]] {
 							interchangeable <- xmlToInterchangeable("interchangeable").maybe
 						} yield SignatureTimeChoice(timeSignature, interchangeable)
 					}
-					xmlToInnerTimeClass.orElse(xmlToString("senza-misura").map(SenzaMisuraTimeChoice(_)))
+					xmlToInnerTimeClass.orElse(xmlToString("senza-misura").map(SenzaMisuraTimeChoice))
 				}
 			} yield Time(choice, number, symbol, separator, printStyleAlign, printObject)
 		}
@@ -348,7 +348,7 @@ trait ComplexParserComponent[M[+_]] {
 						.orElse(nodeWithName("sfz").map(_ => DynamicSymbolChoice(DynamicSymbols.sfz)))
 						.orElse(nodeWithName("sffz").map(_ => DynamicSymbolChoice(DynamicSymbols.sffz)))
 						.orElse(nodeWithName("fz").map(_ => DynamicSymbolChoice(DynamicSymbols.fz)))
-						.orElse(node("other-dynamics")(DynamicStringChoice(_)))
+						.orElse(node("other-dynamics")(DynamicStringChoice))
 						.many
 				}
 			} yield Dynamics(dynamics, printStyleAlign, placement, textDecoration, enclosure)
@@ -472,8 +472,8 @@ trait ComplexParserComponent[M[+_]] {
 			for {
 				printObject <- xmlToPrintObject
 				nameDisplay <- branchNode(name) {
-					xmlToFormattedText("display-text").map(FormattedTextNameDisplayChoice(_))
-						.orElse(xmlToAccidentalText("accidental-text").map(AccidentalTextNameDisplayChoice(_)))
+					xmlToFormattedText("display-text").map(FormattedTextNameDisplayChoice)
+						.orElse(xmlToAccidentalText("accidental-text").map(AccidentalTextNameDisplayChoice))
 						.many
 						.map(NameDisplay(_, printObject))
 				}
@@ -1080,11 +1080,11 @@ trait ComplexParserComponent[M[+_]] {
 
 		def xmlToEncoding(name: String): XmlParser[Encoding] = {
 			branchNode(name) {
-				date("encoding-date")(node).map(EncodingDate(_))
-					.orElse(xmlToTypedText("encoder").map(EncodingEncoder(_)))
-					.orElse(xmlToString("software").map(EncodingSoftware(_)))
-					.orElse(xmlToString("encoding-description").map(EncodingDescription(_)))
-					.orElse(xmlToSupports("supports").map(EncodingSupports(_)))
+				date("encoding-date")(node).map(EncodingDate)
+					.orElse(xmlToTypedText("encoder").map(EncodingEncoder))
+					.orElse(xmlToString("software").map(EncodingSoftware))
+					.orElse(xmlToString("encoding-description").map(EncodingDescription))
+					.orElse(xmlToSupports("supports").map(EncodingSupports))
 					.many
 					.map(Encoding(_))
 			}

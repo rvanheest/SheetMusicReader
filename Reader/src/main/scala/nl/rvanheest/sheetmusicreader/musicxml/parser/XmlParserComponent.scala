@@ -4,11 +4,13 @@ import nl.rvanheest.sheetmusicreader.monadics.{MonadPlus, StateT}
 
 import scala.xml.{NamespaceBinding, Node}
 
-trait XmlParserComponent[M[+_]] extends ParserComponent {
+trait XmlParserComponent extends ParserComponent {
 
-	type XmlParser[A] = StateT[Seq[Node], A, M]
+	type ParseResult[+_]
 
-	protected implicit val mp: MonadPlus[M]
+	type XmlParser[A] = StateT[Seq[Node], A, ParseResult]
+
+	protected implicit val mp: MonadPlus[ParseResult]
 
 	protected val xmlParser: XmlParser.type
 

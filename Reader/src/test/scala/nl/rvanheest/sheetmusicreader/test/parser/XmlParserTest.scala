@@ -9,11 +9,11 @@ import scala.collection.mutable.ArrayBuffer
 import scala.util.Try
 import scala.xml.{NamespaceBinding, TopScope}
 
-abstract class XmlParserTest[M[+_]] extends XmlParserComponent[M] {
+abstract class XmlParserTest extends XmlParserComponent {
 
 	import XmlParser._
 
-	def isEmpty[T](m: M[T]): Boolean
+	def isEmpty[T](m: ParseResult[T]): Boolean
 
 	@Test
 	def testNodeItemSimple() = {
@@ -258,15 +258,21 @@ abstract class XmlParserTest[M[+_]] extends XmlParserComponent[M] {
 	}
 }
 
-class XmlParserOptionTest extends XmlParserTest[Option] {
-	protected override implicit val mp: MonadPlus[Option] = OptionIsMonadPlus
+class XmlParserOptionTest extends XmlParserTest {
+
+	override type ParseResult[+A] = Option[A]
+
+	protected override implicit val mp: MonadPlus[ParseResult] = OptionIsMonadPlus
 	protected override val xmlParser: XmlParser.type = XmlParser
 
 	def isEmpty[T](m: Option[T]): Boolean = m.isEmpty
 }
 
-class XmlParserTryTest extends XmlParserTest[Try] {
-	protected override implicit val mp: MonadPlus[Try] = TryIsMonadPlus
+class XmlParserTryTest extends XmlParserTest {
+
+	override type ParseResult[+A] = Try[A]
+
+	protected override implicit val mp: MonadPlus[ParseResult] = TryIsMonadPlus
 	protected override val xmlParser: XmlParser.type = XmlParser
 
 	def isEmpty[T](m: Try[T]): Boolean = m.isFailure

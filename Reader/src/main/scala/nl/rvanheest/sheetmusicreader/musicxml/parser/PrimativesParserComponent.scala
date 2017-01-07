@@ -1,6 +1,5 @@
 package nl.rvanheest.sheetmusicreader.musicxml.parser
 
-import nl.rvanheest.sheetmusicreader.monadics.StateT
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeAttributes._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeBarline._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeCommon._
@@ -9,10 +8,8 @@ import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeLayout._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeNote._
 import nl.rvanheest.sheetmusicreader.musicxml.model.Primatives.PrimativeScore._
 
-import scala.xml.Node
-
-trait PrimativesParserComponent[M[+_]] {
-	this: XmlParserComponent[M] =>
+trait PrimativesParserComponent {
+	this: XmlParserComponent =>
 
 	type PrimativeParser[T] = String => (String => T) => XmlParser[T]
 
@@ -240,7 +237,7 @@ trait PrimativesParserComponent[M[+_]] {
 			}
 		}
 
-		def fontSize(name: String)(cssParser: PrimativeParser[CssFontSize])(parser: PrimativeParser[FS_Double]): StateT[Seq[Node], FontSize with Product with Serializable, M] = {
+		def fontSize(name: String)(cssParser: PrimativeParser[CssFontSize])(parser: PrimativeParser[FS_Double]): XmlParser[FontSize] = {
 			cssFontSize(name)(cssParser).map(FS_CssFontSize) <|> parser(name)(s => FS_Double(s.toDouble))
 		}
 
@@ -526,7 +523,7 @@ trait PrimativesParserComponent[M[+_]] {
 			}
 		}
 
-		def yesNoNumber(name: String)(yesNoParser: PrimativeParser[YesNo])(parser: PrimativeParser[YNN_Double]): StateT[Seq[Node], YesNoNumber with Product with Serializable, M] = {
+		def yesNoNumber(name: String)(yesNoParser: PrimativeParser[YesNo])(parser: PrimativeParser[YNN_Double]): XmlParser[YesNoNumber] = {
 			yesNo(name)(yesNoParser).map(YNN_YesNo) <|> parser(name)(s => YNN_Double(s.toDouble))
 		}
 

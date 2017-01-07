@@ -12,14 +12,14 @@ import org.junit.Assert._
 import scala.util.Try
 import scala.xml.Node
 
-trait PrimativesParserTest[M[+ _]] extends PrimativesParserComponent[M] with XmlParserComponent[M] {
+trait PrimativesParserTest extends PrimativesParserComponent with XmlParserComponent {
 
 	import XmlParser._
 
 	type TestParser[T] = PrimativeParser[T] => XmlParser[T]
 	type TestParser2[T] = PrimativeParser[T] => TestParser[T]
 
-	def isEmpty[T](m: M[T]): Boolean
+	def isEmpty[T](m: ParseResult[T]): Boolean
 
 	def nodeTest[T](prim: TestParser[T])(xs: (Node, T)*): Unit = {
 		xs.foreach {
@@ -33,7 +33,7 @@ trait PrimativesParserTest[M[+ _]] extends PrimativesParserComponent[M] with Xml
 	}
 }
 
-trait PrimativeAttributesParserTest[M[+ _]] extends PrimativesParserTest[M] {
+trait PrimativeAttributesParserTest extends PrimativesParserTest {
 
 	import primativeAttributesParser._
 
@@ -141,7 +141,7 @@ trait PrimativeAttributesParserTest[M[+ _]] extends PrimativesParserTest[M] {
 	}
 }
 
-trait PrimativeBarlineParserTest[M[+ _]] extends PrimativesParserTest[M] {
+trait PrimativeBarlineParserTest extends PrimativesParserTest {
 
 	import primativeBarlineParser._
 
@@ -216,7 +216,7 @@ trait PrimativeBarlineParserTest[M[+ _]] extends PrimativesParserTest[M] {
 	}
 }
 
-trait PrimativeCommonParserTest[M[+ _]] extends PrimativesParserTest[M] {
+trait PrimativeCommonParserTest extends PrimativesParserTest {
 
 	import primativeCommonParser._
 
@@ -714,7 +714,7 @@ trait PrimativeCommonParserTest[M[+ _]] extends PrimativesParserTest[M] {
 	}
 }
 
-trait PrimativeDirectionParserTest[M[+_]] extends PrimativesParserTest[M] {
+trait PrimativeDirectionParserTest extends PrimativesParserTest {
 
 	import primativeDirectionParser._
 
@@ -728,31 +728,34 @@ trait PrimativeDirectionParserTest[M[+_]] extends PrimativesParserTest[M] {
 	}
 }
 
-trait PrimativeLayoutParserTest[M[+_]] extends PrimativesParserTest[M] {
+trait PrimativeLayoutParserTest extends PrimativesParserTest {
 
 	import primativeLayoutParser._
 }
 
-trait PrimativeNoteParserTest[M[+_]] extends PrimativesParserTest[M] {
+trait PrimativeNoteParserTest extends PrimativesParserTest {
 
 	import primativeNoteParser._
 }
 
-trait PrimativeScoreParserTest[M[+_]] extends PrimativesParserTest[M] {
+trait PrimativeScoreParserTest extends PrimativesParserTest {
 
 	import primativeScoreParser._
 }
 
-trait PrimativesParserTestSequence[M[+ _]] extends PrimativeAttributesParserTest[M]
-																									 with PrimativeBarlineParserTest[M]
-																									 with PrimativeCommonParserTest[M]
-																									 with PrimativeDirectionParserTest[M]
-																									 with PrimativeLayoutParserTest[M]
-																									 with PrimativeNoteParserTest[M]
-																									 with PrimativeScoreParserTest[M]
+trait PrimativesParserTestSequence extends PrimativeAttributesParserTest
+																									 with PrimativeBarlineParserTest
+																									 with PrimativeCommonParserTest
+																									 with PrimativeDirectionParserTest
+																									 with PrimativeLayoutParserTest
+																									 with PrimativeNoteParserTest
+																									 with PrimativeScoreParserTest
 
-class PrimativesParserOptionTest extends PrimativesParserTestSequence[Option] {
-	protected implicit val mp: MonadPlus[Option] = OptionIsMonadPlus
+class PrimativesParserOptionTest extends PrimativesParserTestSequence {
+
+	override type ParseResult[+A] = Option[A]
+
+	protected implicit val mp: MonadPlus[ParseResult] = OptionIsMonadPlus
 	protected override val xmlParser: XmlParser.type = XmlParser
 
 	protected override val primativeAttributesParser = new PrimativeAttributesParser
@@ -766,8 +769,11 @@ class PrimativesParserOptionTest extends PrimativesParserTestSequence[Option] {
 	def isEmpty[T](m: Option[T]): Boolean = m.isEmpty
 }
 
-class PrimativesParserTryTest extends PrimativesParserTestSequence[Try] {
-	protected implicit val mp: MonadPlus[Try] = TryIsMonadPlus
+class PrimativesParserTryTest extends PrimativesParserTestSequence {
+
+	override type ParseResult[+A] = Try[A]
+
+	protected implicit val mp: MonadPlus[ParseResult] = TryIsMonadPlus
 	protected override val xmlParser: XmlParser.type = XmlParser
 
 	protected override val primativeAttributesParser = new PrimativeAttributesParser

@@ -2,10 +2,10 @@ package nl.rvanheest.sheetmusicreader.musicxml.parser
 
 import nl.rvanheest.sheetmusicreader.musicxml.model.Root.{PartScoreTimewise, _}
 
-trait RootGroupParserComponent[M[+_]] {
-	this: GroupParserComponent[M]
-		with AttributeGroupsParserComponent[M]
-		with XmlParserComponent[M] =>
+trait RootGroupParserComponent {
+	this: GroupParserComponent
+		with AttributeGroupsParserComponent
+		with XmlParserComponent =>
 
 	protected val rootParser: RootParser
 
